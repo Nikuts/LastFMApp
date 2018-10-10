@@ -4,20 +4,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nikkuts.lastfmapp.api.QueryManager;
+
 public class SearchActivity extends AppCompatActivity {
 
-    EditText mEditText;
-    ImageButton mImageButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +30,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
-                String text = queryEditText.getText().toString();
-                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                QueryManager.getInstance().getTopAlbums(queryEditText.getText().toString());
             }
         });
 
@@ -57,5 +53,6 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
-
+    private EditText mEditText;
+    private ImageButton mImageButton;
 }
