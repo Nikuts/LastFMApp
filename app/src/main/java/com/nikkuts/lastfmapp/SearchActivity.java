@@ -2,6 +2,8 @@ package com.nikkuts.lastfmapp;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -9,7 +11,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nikkuts.lastfmapp.api.QueryManager;
 
@@ -20,6 +21,11 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        initToolbar();
+        initRecyclerView();
+    }
+
+    private void initToolbar(){
         Toolbar toolbar = findViewById(R.id.include_toolbar_search);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -30,7 +36,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
-                QueryManager.getInstance().getTopAlbums(queryEditText.getText().toString());
+                mQueryManager.getTopAlbums(queryEditText.getText().toString(), mAdapter);
             }
         });
 
@@ -47,6 +53,24 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    private void initRecyclerView(){
+        mRecyclerView = findViewById(R.id.search_recycler_view);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new AlbumsAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mQueryManager = new QueryManager();
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -55,4 +79,10 @@ public class SearchActivity extends AppCompatActivity {
 
     private EditText mEditText;
     private ImageButton mImageButton;
+
+    private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private AlbumsAdapter mAdapter;
+
+    private QueryManager mQueryManager;
 }

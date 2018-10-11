@@ -2,15 +2,10 @@ package com.nikkuts.lastfmapp.api;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.nikkuts.lastfmapp.AlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.Topalbums;
 import com.nikkuts.lastfmapp.gson.TopalbumsMsg;
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,13 +19,7 @@ public class QueryManager {
     public static final String QUERY_API_KEY = "1e88a3a6a8039f151b6870c55249d094";
     public static final String QUERY_FORMAT = "json";
 
-    private static volatile QueryManager mInstance = new QueryManager();
-
-    public static QueryManager getInstance() {
-        return mInstance;
-    }
-
-    private QueryManager() {
+    public QueryManager() {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(QUERY_BASE_URL)
@@ -40,12 +29,13 @@ public class QueryManager {
         mLastFmApi = retrofit.create(ILastFmApi.class);
     }
 
-    public void getTopAlbums(String artist){
+    public void getTopAlbums(String artist, final AlbumsAdapter adapter){
         mLastFmApi.getTopAlbums(QUERY_TOPALBUMS_METHOD, artist, QUERY_API_KEY, QUERY_FORMAT).enqueue(new Callback<TopalbumsMsg>() {
             @Override
             public void onResponse(Call<TopalbumsMsg> call, Response<TopalbumsMsg> response) {
                 if (response.isSuccessful()) {
                     mTopAlbums = response.body().getTopalbums();
+                    adapter.setAlbums(mTopAlbums);
                 } else {
                     switch (response.code()) {
                         case 404:
