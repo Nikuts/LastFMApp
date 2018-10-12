@@ -1,8 +1,10 @@
 package com.nikkuts.lastfmapp.api;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
-import com.nikkuts.lastfmapp.AlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.Topalbums;
 import com.nikkuts.lastfmapp.gson.TopalbumsMsg;
 
@@ -12,14 +14,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class QueryManager {
+public class QueryViewModel extends ViewModel {
 
     public static final String QUERY_BASE_URL = "http://ws.audioscrobbler.com";
     public static final String QUERY_TOPALBUMS_METHOD = "artist.gettopalbums";
     public static final String QUERY_API_KEY = "1e88a3a6a8039f151b6870c55249d094";
     public static final String QUERY_FORMAT = "json";
 
-    public QueryManager() {
+    public QueryViewModel() {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(QUERY_BASE_URL)
@@ -29,35 +31,45 @@ public class QueryManager {
         mLastFmApi = retrofit.create(ILastFmApi.class);
     }
 
-    public void getTopAlbums(String artist, final AlbumsAdapter adapter){
+    public LiveData<Topalbums> getTopAlbumsLiveData(){
+        if (mTopAlbums == null) {
+            mTopAlbums = new MutableLiveData<>();
+        }
+        return mTopAlbums;
+    }
+
+    public void loadTopAlbums(String artist) {
         mLastFmApi.getTopAlbums(QUERY_TOPALBUMS_METHOD, artist, QUERY_API_KEY, QUERY_FORMAT).enqueue(new Callback<TopalbumsMsg>() {
             @Override
             public void onResponse(Call<TopalbumsMsg> call, Response<TopalbumsMsg> response) {
                 if (response.isSuccessful()) {
-                    mTopAlbums = response.body().getTopalbums();
-                    adapter.setAlbums(mTopAlbums);
+                    mTopAlbums.postValue(response.body().getTopalbums());
                 } else {
-                    switch (response.code()) {
-                        case 404:
-                            Log.e(QueryManager.class.getName(), "Not found");
-                            break;
-                        case 500:
-                            Log.e(QueryManager.class.getName(), "Server broken");
-                            break;
-                        default:
-                            Log.e(QueryManager.class.getName(), "Unknown error");
-                            break;
-                    }
+                    handleHTTPError(response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<TopalbumsMsg> call, Throwable t) {
-                Log.e(QueryManager.class.getName(), "Network failure");
+                Log.e(QueryViewModel.class.getName(), "Network failure");
             }
         });
     }
 
+    private void handleHTTPError(int code){
+        switch (code) {
+            case 404:
+                Log.e(QueryViewModel.class.getName(), "Not found");
+                break;
+            case 500:
+                Log.e(QueryViewModel.class.getName(), "Server broken");
+                break;
+            default:
+                Log.e(QueryViewModel.class.getName(), "Unknown error");
+                break;
+        }
+    }
+
+    private MutableLiveData<Topalbums> mTopAlbums;
     private ILastFmApi mLastFmApi;
-    private Topalbums mTopAlbums;
 }

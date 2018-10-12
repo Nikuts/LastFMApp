@@ -1,6 +1,10 @@
 package com.nikkuts.lastfmapp;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.nikkuts.lastfmapp.api.QueryManager;
+import com.nikkuts.lastfmapp.api.QueryViewModel;
+import com.nikkuts.lastfmapp.gson.Topalbums;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -23,6 +28,7 @@ public class SearchActivity extends AppCompatActivity {
 
         initToolbar();
         initRecyclerView();
+        initQueryViewModel();
     }
 
     private void initToolbar(){
@@ -36,7 +42,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
-                mQueryManager.getTopAlbums(queryEditText.getText().toString(), mAdapter);
+                mQueryViewModel.loadTopAlbums(queryEditText.getText().toString());
             }
         });
 
@@ -65,11 +71,17 @@ public class SearchActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mQueryManager = new QueryManager();
+    private void initQueryViewModel(){
+        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
+        mTopAlbums = mQueryViewModel.getTopAlbumsLiveData();
+        mTopAlbums.observe(this, new Observer<Topalbums>() {
+            @Override
+            public void onChanged(@Nullable Topalbums topalbums) {
+                mAdapter.setAlbums(topalbums);
+            }
+        });
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -84,5 +96,6 @@ public class SearchActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
     private AlbumsAdapter mAdapter;
 
-    private QueryManager mQueryManager;
+    private QueryViewModel mQueryViewModel;
+    private LiveData<Topalbums> mTopAlbums;
 }
