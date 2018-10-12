@@ -10,9 +10,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.gson.Topalbums;
 
 public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
+    private static final int LARGE_IMAGE_URL_INDEX = 2;
+    private static final float THUMBNAIL_SIZE = 0.2f;
 
     public void setAlbums(Topalbums mAlbums){
         this.mAlbums = mAlbums;
@@ -32,6 +35,11 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         if (mAlbums != null) {
             holder.mPrimaryText.setText(mAlbums.getAlbum().get(position).getName());
             holder.mSubText.setText(mAlbums.getAlbum().get(position).getArtist().getName());
+
+            Glide.with(holder.mImage)
+                    .load(mAlbums.getAlbum().get(position).getImage().get(LARGE_IMAGE_URL_INDEX).getText())
+                    .thumbnail(THUMBNAIL_SIZE)
+                    .into(holder.mImage);
         }
     }
 

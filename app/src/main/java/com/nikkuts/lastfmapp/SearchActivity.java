@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nikkuts.lastfmapp.api.QueryViewModel;
@@ -27,6 +28,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         initToolbar();
+        initSpinner();
         initRecyclerView();
         initQueryViewModel();
     }
@@ -41,6 +43,7 @@ public class SearchActivity extends AppCompatActivity {
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mSpinner.setVisibility(View.VISIBLE);
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
                 mQueryViewModel.loadTopAlbums(queryEditText.getText().toString());
             }
@@ -77,11 +80,16 @@ public class SearchActivity extends AppCompatActivity {
         mTopAlbums.observe(this, new Observer<Topalbums>() {
             @Override
             public void onChanged(@Nullable Topalbums topalbums) {
+                mSpinner.setVisibility(View.GONE);
                 mAdapter.setAlbums(topalbums);
             }
         });
     }
 
+    private void initSpinner(){
+        mSpinner = findViewById(R.id.search_progressBar);
+        mSpinner.setVisibility(View.GONE);
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -91,6 +99,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private EditText mEditText;
     private ImageButton mImageButton;
+
+    private ProgressBar mSpinner;
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
