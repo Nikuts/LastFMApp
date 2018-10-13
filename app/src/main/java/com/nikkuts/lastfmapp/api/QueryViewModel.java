@@ -38,12 +38,29 @@ public class QueryViewModel extends ViewModel {
         return mTopAlbums;
     }
 
-    public void loadTopAlbums(String artist) {
-        mLastFmApi.getTopAlbums(QUERY_TOPALBUMS_METHOD, artist, QUERY_API_KEY, QUERY_FORMAT).enqueue(new Callback<TopalbumsMsg>() {
+    public LiveData<String> getHTTPErrorLiveData() {
+        if (mQueryError == null) {
+            mQueryError = new MutableLiveData<>();
+        }
+        return mQueryError;
+    }
+
+    public void loadTopAlbums(String artist, final int page) {
+        mLastFmApi.getTopAlbums(QUERY_TOPALBUMS_METHOD, artist, page, QUERY_API_KEY, QUERY_FORMAT).enqueue(new Callback<TopalbumsMsg>() {
             @Override
             public void onResponse(Call<TopalbumsMsg> call, Response<TopalbumsMsg> response) {
                 if (response.isSuccessful()) {
-                    mTopAlbums.postValue(response.body().getTopalbums());
+                    if (response.body().getTopalbums() != null) {
+                        if (page > 1) {
+                            mTopAlbums.getValue().getAlbum().addAll(response.body().getTopalbums().getAlbum());
+                            mTopAlbums.postValue(mTopAlbums.getValue());
+                        }
+                        else
+                            mTopAlbums.postValue(response.body().getTopalbums());
+                    }
+                    else {
+                        mQueryError.postValue("Artist not found");
+                    }
                 } else {
                     handleHTTPError(response.code());
                 }
@@ -51,6 +68,7 @@ public class QueryViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<TopalbumsMsg> call, Throwable t) {
+                mQueryError.postValue("Network failure");
                 Log.e(QueryViewModel.class.getName(), "Network failure");
             }
         });
@@ -60,16 +78,20 @@ public class QueryViewModel extends ViewModel {
         switch (code) {
             case 404:
                 Log.e(QueryViewModel.class.getName(), "Not found");
+                mQueryError.postValue("Not found");
                 break;
             case 500:
                 Log.e(QueryViewModel.class.getName(), "Server broken");
+                mQueryError.postValue("Server broken");
                 break;
             default:
                 Log.e(QueryViewModel.class.getName(), "Unknown error");
+                mQueryError.postValue("Unknown error");
                 break;
         }
     }
 
     private MutableLiveData<Topalbums> mTopAlbums;
+    private MutableLiveData<String> mQueryError;
     private ILastFmApi mLastFmApi;
 }

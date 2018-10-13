@@ -10,6 +10,7 @@ public interface ILastFmApi {
     @GET("/2.0/")
     Call<TopalbumsMsg> getTopAlbums(@Query("method") String method,
                                     @Query("artist") String artist,
+                                    @Query("page")  int page,
                                     @Query("api_key") String apiKey,
                                     @Query("format") String format);
 }

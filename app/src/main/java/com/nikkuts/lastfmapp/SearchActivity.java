@@ -16,11 +16,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nikkuts.lastfmapp.api.QueryViewModel;
 import com.nikkuts.lastfmapp.gson.Topalbums;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements IBottomReachedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,12 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mSpinner.setVisibility(View.VISIBLE);
+
+                mQueryPage = 1;
+
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
-                mQueryViewModel.loadTopAlbums(queryEditText.getText().toString());
+                mQueryText = queryEditText.getText().toString();
+                mQueryViewModel.loadTopAlbums(mQueryText, mQueryPage);
             }
         });
 
@@ -71,6 +76,7 @@ public class SearchActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mAdapter = new AlbumsAdapter();
+        mAdapter.setBottomReachedListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -84,6 +90,16 @@ public class SearchActivity extends AppCompatActivity {
                 mAdapter.setAlbums(topalbums);
             }
         });
+
+        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
+        mQueryError.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String error) {
+                mSpinner.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void initSpinner(){
@@ -92,10 +108,19 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBottomReached(int position) {
+        mQueryPage++;
+        mQueryViewModel.loadTopAlbums(mQueryText, mQueryPage);
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
+
+    private String mQueryText;
+    private int mQueryPage;
 
     private EditText mEditText;
     private ImageButton mImageButton;
@@ -108,4 +133,5 @@ public class SearchActivity extends AppCompatActivity {
 
     private QueryViewModel mQueryViewModel;
     private LiveData<Topalbums> mTopAlbums;
+    private LiveData<String> mQueryError;
 }

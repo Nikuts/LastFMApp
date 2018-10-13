@@ -22,6 +22,11 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         notifyDataSetChanged();
     }
 
+    public void setBottomReachedListener(IBottomReachedListener bottomReachedListener){
+
+        this.mOnBottomReachedListener = bottomReachedListener;
+    }
+
     @NonNull
     @Override
     public AlbumsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,6 +38,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
     @Override
     public void onBindViewHolder(@NonNull AlbumsViewHolder holder, int position) {
         if (mAlbums != null) {
+            if (mOnBottomReachedListener != null && position == mAlbums.getAlbum().size() - 5){
+                mOnBottomReachedListener.onBottomReached(position);
+            }
+
             holder.mPrimaryText.setText(mAlbums.getAlbum().get(position).getName());
             holder.mSubText.setText(mAlbums.getAlbum().get(position).getArtist().getName());
 
@@ -68,6 +77,6 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
         private Button mButton;
     }
 
-
+    private IBottomReachedListener mOnBottomReachedListener;
     private Topalbums mAlbums;
 }
