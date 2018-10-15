@@ -1,8 +1,10 @@
-package com.nikkuts.lastfmapp.gson;
+package com.nikkuts.lastfmapp.gson.topalbums;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.nikkuts.lastfmapp.gson.Artist;
+import com.nikkuts.lastfmapp.gson.Image;
 
 public class Album {
 

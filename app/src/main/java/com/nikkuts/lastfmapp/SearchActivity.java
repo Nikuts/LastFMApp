@@ -18,8 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nikkuts.lastfmapp.api.QueryViewModel;
-import com.nikkuts.lastfmapp.gson.Topalbums;
+import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 
 public class SearchActivity extends AppCompatActivity implements IBottomReachedListener {
 

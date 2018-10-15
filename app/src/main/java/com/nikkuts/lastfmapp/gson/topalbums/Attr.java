@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.gson;
+package com.nikkuts.lastfmapp.gson.topalbums;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

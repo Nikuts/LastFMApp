@@ -1,5 +1,6 @@
 package com.nikkuts.lastfmapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.nikkuts.lastfmapp.gson.Topalbums;
+import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 
 public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
     private static final int LARGE_IMAGE_URL_INDEX = 2;
@@ -49,6 +50,14 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
                     .load(mAlbums.getAlbum().get(position).getImage().get(LARGE_IMAGE_URL_INDEX).getText())
                     .thumbnail(THUMBNAIL_SIZE)
                     .into(holder.mImage);
+
+            holder.mButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent searchIntent = new Intent(view.getContext(), AlbumInfoActivity.class);
+                    view.getContext().startActivity(searchIntent);
+                }
+            });
         }
     }
 
