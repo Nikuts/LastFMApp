@@ -10,7 +10,7 @@
         layout="@layout/toolbar_search" />
 
     <ProgressBar
-        android:id="@+id/search_progressBar"
+        android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

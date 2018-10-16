@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nikkuts.lastfmapp.adaptors.AlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 
 public class SearchActivity extends AppCompatActivity implements IBottomReachedListener {
@@ -102,7 +103,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     }
 
     private void initSpinner(){
-        mSpinner = findViewById(R.id.search_progressBar);
+        mSpinner = findViewById(R.id.progressBar);
         mSpinner.setVisibility(View.GONE);
     }
 

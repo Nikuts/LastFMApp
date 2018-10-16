@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp;
+package com.nikkuts.lastfmapp.adaptors;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -12,14 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.nikkuts.lastfmapp.AlbumInfoActivity;
+import com.nikkuts.lastfmapp.IBottomReachedListener;
+import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 
 public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
     private static final int LARGE_IMAGE_URL_INDEX = 2;
     private static final float THUMBNAIL_SIZE = 0.2f;
 
-    public void setAlbums(Topalbums mAlbums){
-        this.mAlbums = mAlbums;
+    public void setAlbums(Topalbums albums){
+        this.mAlbums = albums;
         notifyDataSetChanged();
     }
 
@@ -37,7 +40,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlbumsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final AlbumsViewHolder holder, final int position) {
         if (mAlbums != null) {
             if (mOnBottomReachedListener != null && position == mAlbums.getAlbum().size() - 5){
                 mOnBottomReachedListener.onBottomReached(position);
@@ -54,7 +57,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             holder.mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     Intent searchIntent = new Intent(view.getContext(), AlbumInfoActivity.class);
+                    searchIntent.putExtra("album", mAlbums.getAlbum().get(position).getName());
+                    searchIntent.putExtra("artist", mAlbums.getAlbum().get(position).getArtist().getName());
                     view.getContext().startActivity(searchIntent);
                 }
             });

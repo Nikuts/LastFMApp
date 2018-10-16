@@ -28,7 +28,7 @@
             android:id="@+id/search_bar_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@drawable/round_search_white_36dp" />
+            android:background="@drawable/ic_search_white_24dp" />
 
     </LinearLayout>
 
