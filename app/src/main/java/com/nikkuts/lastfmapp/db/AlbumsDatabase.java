@@ -5,7 +5,12 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-@Database(entities = {AlbumInfoEntity.class, TrackEntity.class}, version = 1)
+import com.nikkuts.lastfmapp.db.dao.AlbumDao;
+import com.nikkuts.lastfmapp.db.dao.TrackDao;
+import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
+import com.nikkuts.lastfmapp.db.entity.TrackEntity;
+
+@Database(entities = {AlbumInfoEntity.class, TrackEntity.class}, version = 2)
 public abstract class AlbumsDatabase extends RoomDatabase {
     private static final String DB_NAME = "albums.db";
     private static AlbumsDatabase INSTANCE;
@@ -18,7 +23,9 @@ public abstract class AlbumsDatabase extends RoomDatabase {
             synchronized (AlbumsDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AlbumsDatabase.class, DB_NAME).build();
+                            AlbumsDatabase.class, DB_NAME)
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }

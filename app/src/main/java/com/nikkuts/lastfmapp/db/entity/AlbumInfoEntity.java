@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.db;
+package com.nikkuts.lastfmapp.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.nikkuts.lastfmapp.adaptors.AlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.QueryViewModel;
-import com.nikkuts.lastfmapp.query.TopAlbumsQuery;
 
 public class SearchActivity extends AppCompatActivity implements IBottomReachedListener {
 
@@ -53,7 +52,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
                 mQueryText = queryEditText.getText().toString();
 
-                mTopAlbumsQuery.loadTopAlbums(mQueryText.trim(), mQueryPage);
+                mQueryViewModel.loadTopAlbums(mQueryText.trim(), mQueryPage);
             }
         });
 
@@ -78,14 +77,14 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new AlbumsAdapter();
+        mAdapter = new AlbumsAdapter(this);
         mAdapter.setBottomReachedListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private void initQueryViewModel(){
-        mTopAlbumsQuery = ViewModelProviders.of(this).get(TopAlbumsQuery.class);
-        mTopAlbums = mTopAlbumsQuery.getTopAlbumsLiveData();
+        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
+        mTopAlbums = mQueryViewModel.getTopAlbumsLiveData();
         mTopAlbums.observe(this, new Observer<Topalbums>() {
             @Override
             public void onChanged(@Nullable Topalbums topalbums) {
@@ -94,7 +93,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
             }
         });
 
-        mQueryError = mTopAlbumsQuery.getHTTPErrorLiveData();
+        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
         mQueryError.observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String error) {
@@ -113,7 +112,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     @Override
     public void onBottomReached(int position) {
         mQueryPage++;
-        mTopAlbumsQuery.loadTopAlbums(mQueryText, mQueryPage);
+        mQueryViewModel.loadTopAlbums(mQueryText, mQueryPage);
     }
 
     @Override
@@ -134,7 +133,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     private LinearLayoutManager mLayoutManager;
     private AlbumsAdapter mAdapter;
 
-    private TopAlbumsQuery mTopAlbumsQuery;
+    private QueryViewModel mQueryViewModel;
     private LiveData<Topalbums> mTopAlbums;
     private LiveData<String> mQueryError;
 }

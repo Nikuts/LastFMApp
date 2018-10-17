@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.db;
+package com.nikkuts.lastfmapp.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -13,7 +13,7 @@ import android.arch.persistence.room.PrimaryKey;
         indices = {@Index("id"), @Index("mbid")})
 
 public class TrackEntity {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int id;
 
     @ColumnInfo(name = "mbid")

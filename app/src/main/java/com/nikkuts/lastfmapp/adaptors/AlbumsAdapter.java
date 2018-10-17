@@ -1,13 +1,8 @@
 package com.nikkuts.lastfmapp.adaptors;
 
-import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +16,21 @@ import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.AlbumInfoActivity;
 import com.nikkuts.lastfmapp.IBottomReachedListener;
 import com.nikkuts.lastfmapp.R;
+import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
+import com.nikkuts.lastfmapp.db.AlbumsDatabase;
+import com.nikkuts.lastfmapp.db.entity.TrackEntity;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
+import com.nikkuts.lastfmapp.gson.albuminfo.Track;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
-import com.nikkuts.lastfmapp.query.AlbumInfoQuery;
+import com.nikkuts.lastfmapp.query.ApiManager;
+import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
 
-public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
+public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> implements IAlbumInfoLoadedListener {
     private static final float THUMBNAIL_SIZE = 0.2f;
+
+    public AlbumsAdapter(Context context) {
+        this.mContext = context;
+    }
 
     public void setAlbums(Topalbums albums){
         this.mAlbums = albums;
@@ -75,7 +79,10 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             holder.mSaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    ApiManager apiManager = new ApiManager();
+                    apiManager.setAlbumInfoLoadedListener(AlbumsAdapter.this);
+                    apiManager.loadAlbumInfo(mAlbums.getAlbum().get(position).getArtist().getName(),
+                            mAlbums.getAlbum().get(position).getName());
                 }
             });
         }
@@ -87,6 +94,21 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             return mAlbums.getAlbum().size();
         }
         return 0;
+    }
+
+    @Override
+    public void onInfoLoaded(final Album album) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AlbumsDatabase database = AlbumsDatabase.getDatabase(mContext);
+                database.albumDao().insert(new AlbumInfoEntity(album));
+                for (Track track : album.getTracks().getTrack()) {
+                    database.trackDao().insert(new TrackEntity(album.getMbid(), track.getName()));
+                }
+            }
+        });
+        thread.start();
     }
 
 
@@ -109,4 +131,5 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
 
     private IBottomReachedListener mOnBottomReachedListener;
     private Topalbums mAlbums;
+    private Context mContext;
 }

@@ -19,12 +19,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.adaptors.TracksAdaptor;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
-import com.nikkuts.lastfmapp.gson.albuminfo.Track;
-import com.nikkuts.lastfmapp.query.AlbumInfoQuery;
 import com.nikkuts.lastfmapp.query.QueryViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AlbumInfoActivity extends AppCompatActivity {
     private static final float THUMBNAIL_SIZE = 0.2f;
@@ -41,7 +36,7 @@ public class AlbumInfoActivity extends AppCompatActivity {
         String artist = intent.getExtras().getString("artist");
         String album = intent.getExtras().getString("album");
 
-        mAlbumInfoQuery.loadAlbumInfo(artist, album);
+        mQueryViewModel.loadAlbumInfo(artist, album);
     }
 
     private void initLayout(){
@@ -71,8 +66,8 @@ public class AlbumInfoActivity extends AppCompatActivity {
     }
 
     private void initQueryViewModel(){
-        mAlbumInfoQuery = ViewModelProviders.of(this).get(AlbumInfoQuery.class);
-        mAlbumInfo = mAlbumInfoQuery.getAlbumInfoLiveData();
+        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
+        mAlbumInfo = mQueryViewModel.getAlbumInfoLiveData();
         mAlbumInfo.observe(this, new Observer<Album>() {
             @Override
             public void onChanged(@Nullable Album album) {
@@ -90,7 +85,7 @@ public class AlbumInfoActivity extends AppCompatActivity {
             }
         });
 
-        mQueryError = mAlbumInfoQuery.getHTTPErrorLiveData();
+        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
         mQueryError.observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String error) {
@@ -115,7 +110,7 @@ public class AlbumInfoActivity extends AppCompatActivity {
     private RecyclerView mTracksView;
     private TracksAdaptor mTracksAdapter;
 
-    private AlbumInfoQuery mAlbumInfoQuery;
+    private QueryViewModel mQueryViewModel;
     private LiveData<Album> mAlbumInfo;
     private LiveData<String> mQueryError;
 }

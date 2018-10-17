@@ -1,7 +1,10 @@
 package com.nikkuts.lastfmapp;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -9,6 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
+import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
+import com.nikkuts.lastfmapp.gson.albuminfo.Album;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +29,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         AlbumsDatabase database = AlbumsDatabase.getDatabase(this);
-        database.albumDao().getAllAlbums();
+        mAlbumInfoLiveData = database.albumDao().getAllAlbums();
+        mAlbumInfoLiveData.observe(this, new Observer<List<AlbumInfoEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<AlbumInfoEntity> albumInfoEntities) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -47,4 +65,6 @@ public class MainActivity extends AppCompatActivity {
         Intent searchIntent = new Intent(this, SearchActivity.class);
         startActivity(searchIntent);
     }
+
+    LiveData<List<AlbumInfoEntity>> mAlbumInfoLiveData;
 }

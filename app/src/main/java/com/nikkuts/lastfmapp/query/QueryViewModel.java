@@ -5,27 +5,31 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.nikkuts.lastfmapp.gson.albuminfo.Album;
+import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.api.ILastFmApi;
+import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
+import com.nikkuts.lastfmapp.query.listeners.IQueryErrorListener;
+import com.nikkuts.lastfmapp.query.listeners.ITopAlbumsLoadedListener;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class QueryViewModel extends ViewModel {
-
-    public static final String QUERY_BASE_URL = "http://ws.audioscrobbler.com";
-    public static final String QUERY_TOPALBUMS_METHOD = "artist.gettopalbums";
-    public static final String QUERY_ALBUMINFO_METHOD = "album.getInfo";
-    public static final String QUERY_API_KEY = "1e88a3a6a8039f151b6870c55249d094";
-    public static final String QUERY_FORMAT = "json";
+public class QueryViewModel extends ViewModel implements IAlbumInfoLoadedListener, IQueryErrorListener, ITopAlbumsLoadedListener {
 
     public QueryViewModel() {
+        mApiManager = new ApiManager();
+        mApiManager.setAlbumInfoLoadedListener(this);
+        mApiManager.setQueryErrorListener(this);
+        mApiManager.setTopAlbumsLoadedListener(this);
+    }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(QUERY_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    public void loadTopAlbums(String artist, int page){
+        mApiManager.loadTopAlbums(artist, page);
+    }
 
-        mLastFmApi = retrofit.create(ILastFmApi.class);
+    public void loadAlbumInfo(String artist, String album) {
+        mApiManager.loadAlbumInfo(artist, album);
     }
 
     public LiveData<String> getHTTPErrorLiveData() {
@@ -35,23 +39,45 @@ public class QueryViewModel extends ViewModel {
         return mQueryError;
     }
 
-    protected void handleHTTPError(int code){
-        switch (code) {
-            case 404:
-                Log.e(QueryViewModel.class.getName(), "Not found");
-                mQueryError.postValue("Not found");
-                break;
-            case 500:
-                Log.e(QueryViewModel.class.getName(), "Server broken");
-                mQueryError.postValue("Server broken");
-                break;
-            default:
-                Log.e(QueryViewModel.class.getName(), "Unknown error");
-                mQueryError.postValue("Unknown error");
-                break;
+    public LiveData<Topalbums> getTopAlbumsLiveData(){
+        if (mTopAlbums == null) {
+            mTopAlbums = new MutableLiveData<>();
         }
+        return mTopAlbums;
     }
 
-    protected MutableLiveData<String> mQueryError;
-    protected ILastFmApi mLastFmApi;
+    public LiveData<Album> getAlbumInfoLiveData() {
+        if (mAlbumInfo == null) {
+            mAlbumInfo = new MutableLiveData<>();
+        }
+        return mAlbumInfo;
+    }
+
+    @Override
+    public void onInfoLoaded(Album album) {
+        mAlbumInfo.postValue(album);
+    }
+
+    @Override
+    public void onError(String errorMsg) {
+        mQueryError.postValue(errorMsg);
+    }
+
+    @Override
+    public void onAlbumsLoaded(Topalbums topalbums, int page) {
+        if (page > 1) {
+            mTopAlbums.getValue().getAlbum().addAll(topalbums.getAlbum());
+            mTopAlbums.postValue(mTopAlbums.getValue());
+        }
+        else
+            mTopAlbums.postValue(topalbums);
+    }
+
+    private ApiManager mApiManager;
+
+    private MutableLiveData<String> mQueryError;
+    private MutableLiveData<Album> mAlbumInfo;
+    private MutableLiveData<Topalbums> mTopAlbums;
+
+
 }
