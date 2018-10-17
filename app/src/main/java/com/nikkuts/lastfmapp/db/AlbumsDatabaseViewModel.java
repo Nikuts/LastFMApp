@@ -3,46 +3,33 @@ package com.nikkuts.lastfmapp.db;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
+import com.nikkuts.lastfmapp.db.entity.TrackEntity;
+import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 import java.util.List;
 
 public class AlbumsDatabaseViewModel extends AndroidViewModel {
 
-    private final LiveData<List<AlbumInfoEntity>> mAlbumsLiveData;
+    private final LiveData<List<AlbumWithTracks>> mAlbumWithTracksLiveData;
 
     public AlbumsDatabaseViewModel(@NonNull Application application) {
         super(application);
         mAlbumsDatabase = AlbumsDatabase.getDatabase(this.getApplication());
-        mAlbumsLiveData = mAlbumsDatabase.albumDao().getAllAlbums();
+        mAlbumWithTracksLiveData = mAlbumsDatabase.albumDao().getAlbumWithTracks();
     }
 
-    public LiveData<List<AlbumInfoEntity>> getmAlbumLiveData() {
-        return mAlbumsLiveData;
+    public LiveData<List<AlbumWithTracks>> getAlbumWithTracksLiveData() {
+        return mAlbumWithTracksLiveData;
     }
 
-    public void deleteItem(AlbumInfoEntity albumInfoEntity) {
-        new DeleteAsyncTask(mAlbumsDatabase).execute(albumInfoEntity);
+    public void deleteItem(Album album) {
+        new DatabaseActionAsyncTask(mAlbumsDatabase, DatabaseActionAsyncTask.Action.DELETE).execute(album);
     }
 
-    private static class DeleteAsyncTask extends AsyncTask<AlbumInfoEntity, Void, Void> {
-
-
-        DeleteAsyncTask(AlbumsDatabase albumsDatabase) {
-            mDatabase = albumsDatabase;
-        }
-
-        @Override
-        protected Void doInBackground(final AlbumInfoEntity... params) {
-            mDatabase.albumDao().delete(params[0]);
-            mDatabase.trackDao().deleteAllTracksByMbid(params[0].getMbid());
-            return null;
-        }
-
-        private AlbumsDatabase mDatabase;
+    public void insertItem(Album album) {
+        new DatabaseActionAsyncTask(mAlbumsDatabase, DatabaseActionAsyncTask.Action.INSERT).execute(album);
     }
 
     private AlbumsDatabase mAlbumsDatabase;

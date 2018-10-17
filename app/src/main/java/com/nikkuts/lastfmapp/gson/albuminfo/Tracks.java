@@ -13,4 +13,9 @@ public class Tracks {
     public List<Track> getTrack() {
         return track;
     }
+
+    public void setTrack(List<Track> track) {
+        this.track = track;
+    }
+
 }

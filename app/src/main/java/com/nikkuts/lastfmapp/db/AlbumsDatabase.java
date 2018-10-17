@@ -10,7 +10,7 @@ import com.nikkuts.lastfmapp.db.dao.TrackDao;
 import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
 import com.nikkuts.lastfmapp.db.entity.TrackEntity;
 
-@Database(entities = {AlbumInfoEntity.class, TrackEntity.class}, version = 2)
+@Database(entities = {AlbumInfoEntity.class, TrackEntity.class}, version = 3)
 public abstract class AlbumsDatabase extends RoomDatabase {
     private static final String DB_NAME = "albums.db";
     private static AlbumsDatabase INSTANCE;

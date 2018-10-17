@@ -79,4 +79,32 @@ public class Album {
     public Wiki getWiki() {
         return wiki;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public void setMbid(String mbid) {
+        this.mbid = mbid;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setImage(List<Image> image) {
+        this.image = image;
+    }
+
+    public void setTracks(Tracks tracks) {
+        this.tracks = tracks;
+    }
+
+    public void setWiki(Wiki wiki) {
+        this.wiki = wiki;
+    }
 }

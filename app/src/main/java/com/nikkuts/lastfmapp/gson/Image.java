@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class Image {
 
+    public static final int IMAGES_COUNT = 6;
+
     @SerializedName("#text")
     @Expose
     private String text;
@@ -18,5 +20,13 @@ public class Image {
 
     public String getSize() {
         return size;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 }

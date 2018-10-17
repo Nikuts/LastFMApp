@@ -7,6 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public interface AlbumDao {
     @Delete
     void delete(AlbumInfoEntity album);
 
-    @Query("SELECT * FROM AlbumInfoEntity")
-    LiveData<List<AlbumInfoEntity>> getAllAlbums();
+    /*@Query("SELECT * FROM AlbumInfoEntity")
+    LiveData<List<AlbumInfoEntity>> getAllAlbums();*/
+
+    @Query("SELECT * from AlbumInfoEntity")
+    LiveData<List<AlbumWithTracks>> getAlbumWithTracks();
 }

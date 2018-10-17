@@ -6,12 +6,9 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(
-        entity = AlbumInfoEntity.class,
-        parentColumns = "mbid",
-        childColumns = "mbid"),
-        indices = {@Index("id"), @Index("mbid")})
+import com.nikkuts.lastfmapp.gson.albuminfo.Track;
 
+@Entity
 public class TrackEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;

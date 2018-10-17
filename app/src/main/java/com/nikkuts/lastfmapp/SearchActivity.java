@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nikkuts.lastfmapp.adaptors.AlbumsAdapter;
+import com.nikkuts.lastfmapp.adaptors.RemoteAlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.QueryViewModel;
 
@@ -77,7 +78,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new AlbumsAdapter(this);
+        mAdapter = new RemoteAlbumsAdapter(this);
         mAdapter.setBottomReachedListener(this);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -131,7 +132,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private AlbumsAdapter mAdapter;
+    private RemoteAlbumsAdapter mAdapter;
 
     private QueryViewModel mQueryViewModel;
     private LiveData<Topalbums> mTopAlbums;

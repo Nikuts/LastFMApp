@@ -49,4 +49,28 @@ public class Track {
     public Artist getArtist() {
         return artist;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public void setAttr(Attr attr) {
+        this.attr = attr;
+    }
+
+    public void setStreamable(Streamable streamable) {
+        this.streamable = streamable;
+    }
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
 }
