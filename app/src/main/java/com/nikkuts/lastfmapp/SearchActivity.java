@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.nikkuts.lastfmapp.adaptors.AlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
+import com.nikkuts.lastfmapp.query.QueryViewModel;
+import com.nikkuts.lastfmapp.query.TopAlbumsQuery;
 
 public class SearchActivity extends AppCompatActivity implements IBottomReachedListener {
 
@@ -35,7 +37,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     }
 
     private void initToolbar(){
-        Toolbar toolbar = findViewById(R.id.include_toolbar_search);
+        Toolbar toolbar = findViewById(R.id.toolbar_search);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -50,7 +52,8 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
 
                 EditText queryEditText = findViewById(R.id.search_bar_edit_text);
                 mQueryText = queryEditText.getText().toString();
-                mQueryViewModel.loadTopAlbums(mQueryText, mQueryPage);
+
+                mTopAlbumsQuery.loadTopAlbums(mQueryText.trim(), mQueryPage);
             }
         });
 
@@ -81,8 +84,8 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     }
 
     private void initQueryViewModel(){
-        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
-        mTopAlbums = mQueryViewModel.getTopAlbumsLiveData();
+        mTopAlbumsQuery = ViewModelProviders.of(this).get(TopAlbumsQuery.class);
+        mTopAlbums = mTopAlbumsQuery.getTopAlbumsLiveData();
         mTopAlbums.observe(this, new Observer<Topalbums>() {
             @Override
             public void onChanged(@Nullable Topalbums topalbums) {
@@ -91,7 +94,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
             }
         });
 
-        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
+        mQueryError = mTopAlbumsQuery.getHTTPErrorLiveData();
         mQueryError.observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String error) {
@@ -110,7 +113,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     @Override
     public void onBottomReached(int position) {
         mQueryPage++;
-        mQueryViewModel.loadTopAlbums(mQueryText, mQueryPage);
+        mTopAlbumsQuery.loadTopAlbums(mQueryText, mQueryPage);
     }
 
     @Override
@@ -131,7 +134,7 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     private LinearLayoutManager mLayoutManager;
     private AlbumsAdapter mAdapter;
 
-    private QueryViewModel mQueryViewModel;
+    private TopAlbumsQuery mTopAlbumsQuery;
     private LiveData<Topalbums> mTopAlbums;
     private LiveData<String> mQueryError;
 }

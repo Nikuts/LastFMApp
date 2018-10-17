@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.api;
+package com.nikkuts.lastfmapp.query.api;
 
 import com.nikkuts.lastfmapp.gson.albuminfo.AlbuminfoMsg;
 import com.nikkuts.lastfmapp.gson.topalbums.TopalbumsMsg;

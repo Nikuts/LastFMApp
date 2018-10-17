@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import com.nikkuts.lastfmapp.gson.Image;
 
 public class Album {
+    public static final int EXTRALARGE_IMAGE_URL_INDEX = 3;
+    public static final int LARGE_IMAGE_URL_INDEX = 2;
 
     @SerializedName("name")
     @Expose

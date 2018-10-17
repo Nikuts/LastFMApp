@@ -9,10 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,13 +20,13 @@ import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.adaptors.TracksAdaptor;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.albuminfo.Track;
+import com.nikkuts.lastfmapp.query.AlbumInfoQuery;
+import com.nikkuts.lastfmapp.query.QueryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumInfoActivity extends AppCompatActivity {
-
-    private static final int EXTRALARGE_IMAGE_URL_INDEX = 3;
     private static final float THUMBNAIL_SIZE = 0.2f;
 
     @Override
@@ -42,16 +41,24 @@ public class AlbumInfoActivity extends AppCompatActivity {
         String artist = intent.getExtras().getString("artist");
         String album = intent.getExtras().getString("album");
 
-        mQueryViewModel.loadAlbumInfo(artist, album);
+        mAlbumInfoQuery.loadAlbumInfo(artist, album);
     }
 
     private void initLayout(){
+
+        Toolbar toolbar = findViewById(R.id.toolbar_transparent);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         mMediaImage = findViewById(R.id.media_image);
         mPrimaryText = findViewById(R.id.primary_text);
         mSubText = findViewById(R.id.sub_text);
 
         mTracksView = findViewById(R.id.recyclerview_tracks);
         mTracksView.setHasFixedSize(true);
+        mTracksView.setNestedScrollingEnabled(false);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mTracksView.setLayoutManager(layoutManager);
@@ -64,8 +71,8 @@ public class AlbumInfoActivity extends AppCompatActivity {
     }
 
     private void initQueryViewModel(){
-        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
-        mAlbumInfo = mQueryViewModel.getAlbumInfoLiveData();
+        mAlbumInfoQuery = ViewModelProviders.of(this).get(AlbumInfoQuery.class);
+        mAlbumInfo = mAlbumInfoQuery.getAlbumInfoLiveData();
         mAlbumInfo.observe(this, new Observer<Album>() {
             @Override
             public void onChanged(@Nullable Album album) {
@@ -77,13 +84,13 @@ public class AlbumInfoActivity extends AppCompatActivity {
                 mTracksAdapter.setAlbums(album.getTracks().getTrack());
 
                 Glide.with(mMediaImage)
-                        .load(album.getImage().get(EXTRALARGE_IMAGE_URL_INDEX).getText())
+                        .load(album.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
                         .thumbnail(THUMBNAIL_SIZE)
                         .into(mMediaImage);
             }
         });
 
-        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
+        mQueryError = mAlbumInfoQuery.getHTTPErrorLiveData();
         mQueryError.observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String error) {
@@ -94,12 +101,10 @@ public class AlbumInfoActivity extends AppCompatActivity {
 
     }
 
-    private List<String> getTrackNamesList(List<Track> tracks){
-        List<String> trackNames = new ArrayList<>();
-        for (Track track : tracks) {
-            trackNames.add(track.getName());
-        }
-        return trackNames;
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private ImageView mMediaImage;
@@ -110,9 +115,7 @@ public class AlbumInfoActivity extends AppCompatActivity {
     private RecyclerView mTracksView;
     private TracksAdaptor mTracksAdapter;
 
-    private QueryViewModel mQueryViewModel;
+    private AlbumInfoQuery mAlbumInfoQuery;
     private LiveData<Album> mAlbumInfo;
     private LiveData<String> mQueryError;
-
-    private List<String> mTrackList;
 }
