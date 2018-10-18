@@ -36,20 +36,20 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
                     .thumbnail(THUMBNAIL_SIZE)
                     .into(holder.mImage);
 
-            holder.mDetailsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent infoIntent = new Intent(view.getContext(), LocalAlbumInfoActivity.class);
-                    infoIntent.putExtra("album", mAlbums.get(position).getName());
-                    infoIntent.putExtra("artist", mAlbums.get(position).getArtist());
-                    view.getContext().startActivity(infoIntent);
-                }
+            holder.mDetailsButton.setOnClickListener(view -> {
+                Intent infoIntent = new Intent(view.getContext(), LocalAlbumInfoActivity.class);
+                infoIntent.putExtra("album", mAlbums.get(position).getName());
+                infoIntent.putExtra("artist", mAlbums.get(position).getArtist());
+                view.getContext().startActivity(infoIntent);
             });
 
             holder.mSavedImage.setVisibility(View.VISIBLE);
-            holder.mSaveButton.setOnClickListener(view ->
-                    new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(mContext), DatabaseActionAsyncTask.Action.DELETE).execute(mAlbums.get(position)));
+            holder.mSaveButton.setOnClickListener(view -> {
+                new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(mContext), DatabaseActionAsyncTask.Action.DELETE).execute(mAlbums.get(position));
+                mAlbums.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, mAlbums.size());
+            });
         }
     }
 

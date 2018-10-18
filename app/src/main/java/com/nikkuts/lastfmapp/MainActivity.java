@@ -36,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
 
         mDatabaseViewModel = new AlbumsDatabaseViewModel(this.getApplication());
         mAlbumWithTracksLiveData = mDatabaseViewModel.getAllAlbumsWithTracksLiveData();
-        mAlbumWithTracksLiveData.observe(this, new Observer<List<AlbumWithTracks>>() {
-            @Override
-            public void onChanged(@Nullable List<AlbumWithTracks> albumWithTracks) {
+        mAlbumWithTracksLiveData.observe(this, albumWithTracksList -> {
+            if (mLastLocalAlbumsCount < albumWithTracksList.size()){ //item removing is handled by adaptor
                 List<Album> albums = new ArrayList<>();
-                for (AlbumWithTracks album : albumWithTracks){
+                for (AlbumWithTracks album : albumWithTracksList){
                     albums.add(AlbumFactory.createAlbumFromEntities(album.getAlbumInfoEntity(), album.getTrackEntities()));
                 }
                 mAdapter.setAlbums(albums);
             }
+            mLastLocalAlbumsCount = albumWithTracksList.size();
         });
     }
 
@@ -89,4 +89,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private LocalAlbumsAdapter mAdapter;
+
+    private int mLastLocalAlbumsCount = 0;
 }

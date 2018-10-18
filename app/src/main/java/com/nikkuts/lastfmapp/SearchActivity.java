@@ -1,5 +1,6 @@
 package com.nikkuts.lastfmapp;
 
+import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -43,30 +45,27 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mImageButton = findViewById(R.id.search_bar_icon);
-        mImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSpinner.setVisibility(View.VISIBLE);
+        mImageButton.setOnClickListener(view -> {
 
-                mQueryPage = 1;
+            hideKeyboard();
 
-                EditText queryEditText = findViewById(R.id.search_bar_edit_text);
-                mQueryText = queryEditText.getText().toString();
+            mSpinner.setVisibility(View.VISIBLE);
 
-                mQueryViewModel.loadTopAlbums(mQueryText.trim(), mQueryPage);
-            }
+            mQueryPage = 1;
+
+            EditText queryEditText = findViewById(R.id.search_bar_edit_text);
+            mQueryText = queryEditText.getText().toString();
+
+            mQueryViewModel.loadTopAlbums(mQueryText.trim(), mQueryPage);
         });
 
         mEditText = findViewById(R.id.search_bar_edit_text);
-        mEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mImageButton.performClick();
-                    return true;
-                }
-                return false;
+        mEditText.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                mImageButton.performClick();
+                return true;
             }
+            return false;
         });
     }
 
@@ -86,21 +85,15 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     private void initQueryViewModel(){
         mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
         mTopAlbums = mQueryViewModel.getTopAlbumsLiveData();
-        mTopAlbums.observe(this, new Observer<Topalbums>() {
-            @Override
-            public void onChanged(@Nullable Topalbums topalbums) {
-                mSpinner.setVisibility(View.GONE);
-                mAdapter.setAlbums(topalbums);
-            }
+        mTopAlbums.observe(this, topalbums -> {
+            mSpinner.setVisibility(View.GONE);
+            mAdapter.setAlbums(topalbums);
         });
 
         mQueryError = mQueryViewModel.getHTTPErrorLiveData();
-        mQueryError.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String error) {
-                mSpinner.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-            }
+        mQueryError.observe(this, error -> {
+            mSpinner.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
         });
 
     }
@@ -108,6 +101,11 @@ public class SearchActivity extends AppCompatActivity implements IBottomReachedL
     private void initSpinner(){
         mSpinner = findViewById(R.id.progressBar);
         mSpinner.setVisibility(View.GONE);
+    }
+
+    private void hideKeyboard(){
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
     @Override

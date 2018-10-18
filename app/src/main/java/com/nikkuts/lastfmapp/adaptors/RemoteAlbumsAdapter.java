@@ -62,7 +62,6 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                 view.getContext().startActivity(infoIntent);
             });
 
-
             mSavedAlbums = mAlbumsDatabaseViewModel.getAlbumsWithTracksLiveDataByArtist(mAlbums.getAlbum().get(position).getArtist().getName());
             mSavedAlbums.observe((LifecycleOwner) mContext, albumWithTracks -> {
                 AlbumWithTracks currentLocalAlbum = albumWithTracks.stream().filter(p ->
@@ -73,11 +72,11 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                 if (currentLocalAlbum != null){
                     holder.mSavedImage.setVisibility(View.VISIBLE);
                     holder.mSaveButton.setOnClickListener(view -> {
+                        holder.mSavedImage.setVisibility(View.GONE);
                         deleteLocalAlbum(currentLocalAlbum);
                     });
                 }
                 else {
-                    holder.mSavedImage.setVisibility(View.GONE);
                     holder.mSaveButton.setOnClickListener(view -> {
                         holder.mSavedImage.setVisibility(View.VISIBLE);
                         saveRemoteAlbum(position);
