@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.AlbumInfoActivity;
+import com.nikkuts.lastfmapp.LocalAlbumInfoActivity;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
@@ -39,7 +40,7 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
                 @Override
                 public void onClick(View view) {
 
-                    Intent infoIntent = new Intent(view.getContext(), AlbumInfoActivity.class);
+                    Intent infoIntent = new Intent(view.getContext(), LocalAlbumInfoActivity.class);
                     infoIntent.putExtra("album", mAlbums.get(position).getName());
                     infoIntent.putExtra("artist", mAlbums.get(position).getArtist());
                     view.getContext().startActivity(infoIntent);

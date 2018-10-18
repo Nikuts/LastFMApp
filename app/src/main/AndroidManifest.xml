@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity"></activity>
-        <activity android:name=".AlbumInfoActivity"></activity>
+        <activity android:name=".RemoteAlbumInfoActivity"></activity>
+        <activity android:name=".LocalAlbumInfoActivity"></activity>
 
     </application>
 

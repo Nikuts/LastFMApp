@@ -1,11 +1,7 @@
 package com.nikkuts.lastfmapp;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,15 +10,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.adaptors.TracksAdaptor;
-import com.nikkuts.lastfmapp.gson.albuminfo.Album;
-import com.nikkuts.lastfmapp.query.QueryViewModel;
 
-public class AlbumInfoActivity extends AppCompatActivity {
-    private static final float THUMBNAIL_SIZE = 0.2f;
+import java.util.List;
+
+public abstract class AlbumInfoActivity extends AppCompatActivity {
+    protected static final float THUMBNAIL_SIZE = 0.2f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +24,12 @@ public class AlbumInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info);
 
         initLayout();
-        initQueryViewModel();
+
+        initViewModel();
 
         Intent intent = getIntent();
-        String artist = intent.getExtras().getString("artist");
-        String album = intent.getExtras().getString("album");
-
-        mQueryViewModel.loadAlbumInfo(artist, album);
+        mArtistName = intent.getExtras().getString("artist");
+        mAlbumName = intent.getExtras().getString("album");
     }
 
     private void initLayout(){
@@ -65,36 +58,7 @@ public class AlbumInfoActivity extends AppCompatActivity {
         mSpinner.setVisibility(View.VISIBLE);
     }
 
-    private void initQueryViewModel(){
-        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
-        mAlbumInfo = mQueryViewModel.getAlbumInfoLiveData();
-        mAlbumInfo.observe(this, new Observer<Album>() {
-            @Override
-            public void onChanged(@Nullable Album album) {
-                mPrimaryText.setText(album.getName());
-                mSubText.setText(album.getArtist());
-
-                mSpinner.setVisibility(View.GONE);
-
-                mTracksAdapter.setAlbums(album.getTracks().getTrack());
-
-                Glide.with(mMediaImage)
-                        .load(album.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
-                        .thumbnail(THUMBNAIL_SIZE)
-                        .into(mMediaImage);
-            }
-        });
-
-        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
-        mQueryError.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String error) {
-                mSpinner.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
+    protected abstract void initViewModel();
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -102,15 +66,14 @@ public class AlbumInfoActivity extends AppCompatActivity {
         return true;
     }
 
-    private ImageView mMediaImage;
-    private TextView mPrimaryText;
-    private TextView mSubText;
-    private ProgressBar mSpinner;
+    protected ImageView mMediaImage;
+    protected TextView mPrimaryText;
+    protected TextView mSubText;
+    protected ProgressBar mSpinner;
 
-    private RecyclerView mTracksView;
-    private TracksAdaptor mTracksAdapter;
+    protected RecyclerView mTracksView;
+    protected TracksAdaptor mTracksAdapter;
 
-    private QueryViewModel mQueryViewModel;
-    private LiveData<Album> mAlbumInfo;
-    private LiveData<String> mQueryError;
+    protected String mArtistName;
+    protected String mAlbumName;
 }

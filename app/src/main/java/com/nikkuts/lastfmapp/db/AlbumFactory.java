@@ -35,7 +35,7 @@ public class AlbumFactory {
         Image largeImage = new Image();
         largeImage.setText(albumInfoEntity.getLargeImage());
         Image extralargeImage = new Image();
-        largeImage.setText(albumInfoEntity.getExtralargeImage());
+        extralargeImage.setText(albumInfoEntity.getExtralargeImage());
 
         List<Image> images = new ArrayList<>();
         for (int i = 0; i < Image.IMAGES_COUNT; i++) {

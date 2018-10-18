@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.AlbumInfoActivity;
+import com.nikkuts.lastfmapp.RemoteAlbumInfoActivity;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
@@ -48,7 +49,7 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                 @Override
                 public void onClick(View view) {
 
-                    Intent infoIntent = new Intent(view.getContext(), AlbumInfoActivity.class);
+                    Intent infoIntent = new Intent(view.getContext(), RemoteAlbumInfoActivity.class);
                     infoIntent.putExtra("album", mAlbums.getAlbum().get(position).getName());
                     infoIntent.putExtra("artist", mAlbums.getAlbum().get(position).getArtist().getName());
                     view.getContext().startActivity(infoIntent);

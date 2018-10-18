@@ -16,7 +16,7 @@ import java.util.List;
 
 public class TracksAdaptor extends RecyclerView.Adapter<TracksAdaptor.TracksViewHolder> {
 
-    public void setAlbums(List<Track> tracks){
+    public void setTracks(List<Track> tracks){
         this.mTracks = tracks;
         notifyDataSetChanged();
     }

@@ -17,7 +17,6 @@ import com.nikkuts.lastfmapp.adaptors.LocalAlbumsAdapter;
 import com.nikkuts.lastfmapp.db.AlbumFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
-import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
 
         mDatabaseViewModel = new AlbumsDatabaseViewModel(this.getApplication());
-        mAlbumWithTracksLiveData = mDatabaseViewModel.getAlbumWithTracksLiveData();
+        mAlbumWithTracksLiveData = mDatabaseViewModel.getAllAlbumsWithTracksLiveData();
         mAlbumWithTracksLiveData.observe(this, new Observer<List<AlbumWithTracks>>() {
             @Override
             public void onChanged(@Nullable List<AlbumWithTracks> albumWithTracks) {
