@@ -25,7 +25,7 @@ public class AlbumFactory {
         album.setArtist(albumInfoEntity.getArtistName());
         album.setName(albumInfoEntity.getAlbumName());
 
-        album.setMbid(albumInfoEntity.getId());
+        album.setMbid(albumInfoEntity.getMbid());
         album.setUrl(albumInfoEntity.getUrl());
 
         Wiki wiki = new Wiki();

@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nikkuts.lastfmapp.adaptors.AlbumsAdapter;
+import com.nikkuts.lastfmapp.adaptors.IBottomReachedListener;
 import com.nikkuts.lastfmapp.adaptors.RemoteAlbumsAdapter;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.QueryViewModel;

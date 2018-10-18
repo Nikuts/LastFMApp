@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DatabaseActionAsyncTask extends AsyncTask<Album, Void, Void> {
 
-    public enum Action {DELETE, INSERT, GET_TRACKS }
+    public enum Action {DELETE, INSERT}
 
     public DatabaseActionAsyncTask(AlbumsDatabase albumsDatabase, Action action) {
         mDatabase = albumsDatabase;
@@ -20,19 +20,18 @@ public class DatabaseActionAsyncTask extends AsyncTask<Album, Void, Void> {
 
     @Override
     protected Void doInBackground(final Album... params) {
+
         switch (mAction){
             case DELETE:
-                mDatabase.albumDao().delete(new AlbumInfoEntity(params[0]));
-                mDatabase.trackDao().deleteAllTracksByMbid(params[0].getMbid());
+                List<AlbumInfoEntity> albumInfoEntity = mDatabase.albumDao().getAlbums(params[0].getArtist(), params[0].getName());
+                mDatabase.albumDao().delete(albumInfoEntity.get(0));
+                mDatabase.trackDao().deleteAllTracksByAlbumId(albumInfoEntity.get(0).getId());
                 break;
             case INSERT:
-                mDatabase.albumDao().insert(new AlbumInfoEntity(params[0]));
+                long albumId = mDatabase.albumDao().insert(new AlbumInfoEntity(params[0]));
                 for (Track track : params[0].getTracks().getTrack()) {
-                    mDatabase.trackDao().insert(new TrackEntity(params[0].getMbid(), track.getName()));
+                    mDatabase.trackDao().insert(new TrackEntity(albumId, track.getName()));
                 }
-                break;
-            case GET_TRACKS:
-                mTracks = mDatabase.trackDao().getAllTracksByMbid(params[0].getMbid());
                 break;
             default:
                 break;
@@ -42,5 +41,4 @@ public class DatabaseActionAsyncTask extends AsyncTask<Album, Void, Void> {
 
     private AlbumsDatabase mDatabase;
     private Action mAction;
-    private List<TrackEntity> mTracks;
 }

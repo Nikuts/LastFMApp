@@ -6,7 +6,6 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.AlbumInfoActivity;
-import com.nikkuts.lastfmapp.IBottomReachedListener;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;

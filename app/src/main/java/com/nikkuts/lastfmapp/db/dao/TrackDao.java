@@ -7,16 +7,12 @@ import android.arch.persistence.room.Query;
 
 import com.nikkuts.lastfmapp.db.entity.TrackEntity;
 
-import java.util.List;
-
 @Dao
 public interface TrackDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(TrackEntity track);
 
-    @Query("DELETE FROM TrackEntity WHERE mbid = :mbid")
-    void deleteAllTracksByMbid(String mbid);
+    @Query("DELETE FROM TrackEntity WHERE album_id = :albumId")
+    void deleteAllTracksByAlbumId(long albumId);
 
-    @Query("SELECT * FROM TrackEntity WHERE mbid = :mbid")
-    List<TrackEntity> getAllTracksByMbid(String mbid);
 }

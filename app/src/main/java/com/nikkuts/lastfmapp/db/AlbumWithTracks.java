@@ -13,7 +13,7 @@ public class AlbumWithTracks {
     @Embedded
     private AlbumInfoEntity albumInfoEntity;
 
-    @Relation(parentColumn = "id", entityColumn = "mbid")
+    @Relation(parentColumn = "id", entityColumn = "album_id")
     private List<TrackEntity> trackEntities;
 
     public AlbumInfoEntity getAlbumInfoEntity() {

@@ -2,46 +2,42 @@ package com.nikkuts.lastfmapp.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-
-import com.nikkuts.lastfmapp.gson.albuminfo.Track;
 
 @Entity
 public class TrackEntity {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
-    @ColumnInfo(name = "mbid")
-    private String mbid;
+    @ColumnInfo(name = "album_id")
+    private long albumId;
 
     @ColumnInfo(name = "track_name")
     private String trackName;
 
-    public TrackEntity(String mbid, String trackName){
-        this.mbid = mbid;
+    public TrackEntity(long albumId, String trackName){
+        this.albumId = albumId;
         this.trackName = trackName;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public String getMbid() {
-        return mbid;
+    public long getAlbumId() {
+        return albumId;
     }
 
     public String getTrackName() {
         return trackName;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setMbid(String mbid) {
-        this.mbid = mbid;
+    public void setAlbumId(long albumId) {
+        this.albumId = albumId;
     }
 
     public void setTrackName(String trackName) {

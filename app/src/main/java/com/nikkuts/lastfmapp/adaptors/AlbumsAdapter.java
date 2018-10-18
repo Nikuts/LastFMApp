@@ -1,7 +1,6 @@
 package com.nikkuts.lastfmapp.adaptors;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,19 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.nikkuts.lastfmapp.AlbumInfoActivity;
-import com.nikkuts.lastfmapp.IBottomReachedListener;
 import com.nikkuts.lastfmapp.R;
-import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
-import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
-import com.nikkuts.lastfmapp.db.AlbumsDatabase;
-import com.nikkuts.lastfmapp.db.entity.TrackEntity;
-import com.nikkuts.lastfmapp.gson.albuminfo.Album;
-import com.nikkuts.lastfmapp.gson.albuminfo.Track;
-import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
-import com.nikkuts.lastfmapp.query.ApiManager;
-import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
 
 public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
     protected static final float THUMBNAIL_SIZE = 0.2f;

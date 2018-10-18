@@ -16,14 +16,14 @@ import java.util.List;
 public interface AlbumDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(AlbumInfoEntity album);
+    long insert(AlbumInfoEntity album);
 
     @Delete
     void delete(AlbumInfoEntity album);
 
-    /*@Query("SELECT * FROM AlbumInfoEntity")
-    LiveData<List<AlbumInfoEntity>> getAllAlbums();*/
-
     @Query("SELECT * from AlbumInfoEntity")
     LiveData<List<AlbumWithTracks>> getAlbumWithTracks();
+
+    @Query("SELECT * from AlbumInfoEntity WHERE artist_name = :artistName AND album_name = :albumName")
+    List<AlbumInfoEntity> getAlbums(String artistName, String albumName);
 }

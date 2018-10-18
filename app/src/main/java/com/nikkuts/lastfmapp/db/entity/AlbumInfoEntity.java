@@ -3,24 +3,17 @@ package com.nikkuts.lastfmapp.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.Relation;
-import android.support.annotation.NonNull;
 
-import com.nikkuts.lastfmapp.gson.Image;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
-import com.nikkuts.lastfmapp.gson.albuminfo.Track;
-import com.nikkuts.lastfmapp.gson.albuminfo.Tracks;
-import com.nikkuts.lastfmapp.gson.albuminfo.Wiki;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class AlbumInfoEntity {
 
-    @NonNull
-    @PrimaryKey
-    private String id;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+
+    @ColumnInfo(name = "mbid")
+    private String mbid;
 
     @ColumnInfo(name = "album_name")
     private String albumName;
@@ -44,7 +37,7 @@ public class AlbumInfoEntity {
     }
 
     public AlbumInfoEntity(Album album) {
-        this.id = album.getMbid();
+        this.mbid = album.getMbid();
         this.albumName = album.getName();
         this.artistName = album.getArtist();
         this.url = album.getUrl();
@@ -55,8 +48,16 @@ public class AlbumInfoEntity {
             this.wiki = album.getWiki().getSummary();
     }
 
-    public void setId(String mbid) {
-        this.id = mbid;
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setMbid(String mbid) {
+        this.mbid = mbid;
     }
 
     public void setAlbumName(String albumName) {
@@ -83,9 +84,9 @@ public class AlbumInfoEntity {
         this.wiki = wiki;
     }
 
-    public String getId() {
+    public String getMbid() {
 
-        return id;
+        return mbid;
     }
 
     public String getAlbumName() {
