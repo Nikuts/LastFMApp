@@ -1,23 +1,31 @@
 package com.nikkuts.lastfmapp.adaptors;
 
+import android.app.Application;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.nikkuts.lastfmapp.AlbumInfoActivity;
 import com.nikkuts.lastfmapp.RemoteAlbumInfoActivity;
+import com.nikkuts.lastfmapp.db.AlbumFactory;
+import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
+import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.ApiManager;
 import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
 
+import java.util.List;
+
 public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoadedListener {
 
     public RemoteAlbumsAdapter(Context context) {
         super(context);
+        mAlbumsDatabaseViewModel = new AlbumsDatabaseViewModel((Application) context.getApplicationContext());
     }
 
     public void setAlbums(Topalbums albums){
@@ -31,42 +39,67 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
     }
 
     @Override
-    protected void bindAlbumsViewHolder(AlbumsViewHolder holder, final int position) {
+    protected void bindAlbumsViewHolder(final AlbumsViewHolder holder, final int position) {
         if (mAlbums != null) {
             if (mOnBottomReachedListener != null && position == mAlbums.getAlbum().size() - 5){
                 mOnBottomReachedListener.onBottomReached(position);
             }
+            final String albumName = mAlbums.getAlbum().get(position).getName();
+            final String artistName = mAlbums.getAlbum().get(position).getArtist().getName();
 
-            holder.mPrimaryText.setText(mAlbums.getAlbum().get(position).getName());
-            holder.mSubText.setText(mAlbums.getAlbum().get(position).getArtist().getName());
+            holder.mPrimaryText.setText(albumName);
+            holder.mSubText.setText(artistName);
 
             Glide.with(holder.mImage)
                     .load(mAlbums.getAlbum().get(position).getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText())
                     .thumbnail(THUMBNAIL_SIZE)
                     .into(holder.mImage);
 
-            holder.mDetailsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            holder.mDetailsButton.setOnClickListener(view -> {
+                Intent infoIntent = new Intent(view.getContext(), RemoteAlbumInfoActivity.class);
+                infoIntent.putExtra("album", albumName);
+                infoIntent.putExtra("artist", artistName);
+                view.getContext().startActivity(infoIntent);
+            });
 
-                    Intent infoIntent = new Intent(view.getContext(), RemoteAlbumInfoActivity.class);
-                    infoIntent.putExtra("album", mAlbums.getAlbum().get(position).getName());
-                    infoIntent.putExtra("artist", mAlbums.getAlbum().get(position).getArtist().getName());
-                    view.getContext().startActivity(infoIntent);
+
+            mSavedAlbums = mAlbumsDatabaseViewModel.getAlbumsWithTracksLiveDataByArtist(mAlbums.getAlbum().get(position).getArtist().getName());
+            mSavedAlbums.observe((LifecycleOwner) mContext, albumWithTracks -> {
+                AlbumWithTracks currentLocalAlbum = albumWithTracks.stream().filter(p ->
+                        p.getAlbumInfoEntity().getAlbumName().equals(albumName))
+                        .findFirst()
+                        .orElse(null);
+
+                if (currentLocalAlbum != null){
+                    holder.mSavedImage.setVisibility(View.VISIBLE);
+                    holder.mSaveButton.setOnClickListener(view -> {
+                        deleteLocalAlbum(currentLocalAlbum);
+                    });
+                }
+                else {
+                    holder.mSavedImage.setVisibility(View.GONE);
+                    holder.mSaveButton.setOnClickListener(view -> {
+                        holder.mSavedImage.setVisibility(View.VISIBLE);
+                        saveRemoteAlbum(position);
+                    });
                 }
             });
 
-            holder.mSaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ApiManager apiManager = new ApiManager();
-                    apiManager.setAlbumInfoLoadedListener(RemoteAlbumsAdapter.this);
-                    apiManager.loadAlbumInfo(mAlbums.getAlbum().get(position).getArtist().getName(),
-                            mAlbums.getAlbum().get(position).getName());
 
-                }
-            });
         }
+    }
+
+    private void deleteLocalAlbum(AlbumWithTracks localAlbum){
+        mAlbumsDatabaseViewModel.deleteItem(AlbumFactory.createAlbumFromEntities(
+                localAlbum.getAlbumInfoEntity(),
+                localAlbum.getTrackEntities()));
+    }
+
+    private void saveRemoteAlbum(int position){
+        ApiManager apiManager = new ApiManager();
+        apiManager.setAlbumInfoLoadedListener(RemoteAlbumsAdapter.this);
+        apiManager.loadAlbumInfo(mAlbums.getAlbum().get(position).getArtist().getName(),
+                mAlbums.getAlbum().get(position).getName());
     }
 
     @Override
@@ -79,9 +112,11 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
 
     @Override
     public void onInfoLoaded(final Album album) {
-        new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(mContext), DatabaseActionAsyncTask.Action.INSERT).execute(album);
+        mAlbumsDatabaseViewModel.insertItem(album);
     }
 
     private IBottomReachedListener mOnBottomReachedListener;
     private Topalbums mAlbums;
+    private AlbumsDatabaseViewModel mAlbumsDatabaseViewModel;
+    private LiveData<List<AlbumWithTracks>> mSavedAlbums;
 }

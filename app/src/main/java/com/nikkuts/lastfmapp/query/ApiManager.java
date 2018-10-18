@@ -43,7 +43,7 @@ public class ApiManager {
                     }
                     else {
                         if (mQueryErrorListener != null)
-                            mQueryErrorListener.onError("Album not found");
+                            mQueryErrorListener.onError("Artist not found");
                     }
                 } else {
                     handleHTTPError(response.code());

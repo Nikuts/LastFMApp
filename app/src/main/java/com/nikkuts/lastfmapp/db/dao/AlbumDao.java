@@ -21,12 +21,15 @@ public interface AlbumDao {
     @Delete
     void delete(AlbumInfoEntity album);
 
-    @Query("SELECT * from AlbumInfoEntity")
-    LiveData<List<AlbumWithTracks>> getAllAlbumsWithTracks();
-
     @Query("SELECT * from AlbumInfoEntity WHERE artist_name = :artistName AND album_name = :albumName")
     List<AlbumInfoEntity> getAlbums(String artistName, String albumName);
 
-    @Query("SELECT * from AlbumInfoEntity WHERE artist_name = :artistName AND album_name = :albumName")
-    LiveData<List<AlbumWithTracks>> getAlbumsWithTracks(String artistName, String albumName);
+    @Query("SELECT * from AlbumInfoEntity")
+    LiveData<List<AlbumWithTracks>> getAllAlbumsWithTracks();
+
+    @Query("SELECT * from AlbumInfoEntity WHERE artist_name = :artistName")
+    LiveData<List<AlbumWithTracks>> getAlbumsWithTracksByArtist(String artistName);
+
+    @Query("SELECT * from AlbumInfoEntity WHERE artist_name = :artistName AND album_name = :albumName LIMIT 1")
+    LiveData<AlbumWithTracks> getAlbumWithTracks(String artistName, String albumName);
 }

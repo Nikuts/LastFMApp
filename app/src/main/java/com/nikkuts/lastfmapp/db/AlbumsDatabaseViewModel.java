@@ -23,8 +23,12 @@ public class AlbumsDatabaseViewModel extends AndroidViewModel {
         return mAllAlbumsWithTracksLiveData;
     }
 
-    public LiveData<List<AlbumWithTracks>> getAlbumsWithTracksLiveData(String artist, String album) {
-        return mAlbumsDatabase.albumDao().getAlbumsWithTracks(artist, album);
+    public LiveData<AlbumWithTracks> getAlbumWithTracksLiveData(String artist, String album) {
+        return mAlbumsDatabase.albumDao().getAlbumWithTracks(artist, album);
+    }
+
+    public LiveData<List<AlbumWithTracks>> getAlbumsWithTracksLiveDataByArtist(String artist) {
+        return mAlbumsDatabase.albumDao().getAlbumsWithTracksByArtist(artist);
     }
 
     public void deleteItem(Album album) {

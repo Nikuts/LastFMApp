@@ -51,6 +51,7 @@ public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.A
             mImage = itemView.findViewById(R.id.media_image);
             mDetailsButton = itemView.findViewById(R.id.action_button_1);
             mSaveButton = itemView.findViewById(R.id.action_button_2);
+            mSavedImage = itemView.findViewById(R.id.action_button_2_saved);
         }
 
         protected TextView mPrimaryText;
@@ -58,6 +59,7 @@ public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.A
         protected ImageView mImage;
         protected Button mDetailsButton;
         protected ImageButton mSaveButton;
+        protected ImageView mSavedImage;
     }
 
     protected Context mContext;

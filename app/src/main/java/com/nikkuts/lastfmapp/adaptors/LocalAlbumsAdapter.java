@@ -47,13 +47,9 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
                 }
             });
 
-            holder.mSaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                   new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(mContext), DatabaseActionAsyncTask.Action.DELETE).execute(mAlbums.get(position));
-
-                }
-            });
+            holder.mSavedImage.setVisibility(View.VISIBLE);
+            holder.mSaveButton.setOnClickListener(view ->
+                    new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(mContext), DatabaseActionAsyncTask.Action.DELETE).execute(mAlbums.get(position)));
         }
     }
 

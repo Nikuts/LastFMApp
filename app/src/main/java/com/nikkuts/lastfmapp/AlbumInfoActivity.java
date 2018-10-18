@@ -23,13 +23,12 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        initLayout();
-
-        initViewModel();
-
         Intent intent = getIntent();
         mArtistName = intent.getExtras().getString("artist");
         mAlbumName = intent.getExtras().getString("album");
+
+        initLayout();
+        initViewModel();
     }
 
     private void initLayout(){
