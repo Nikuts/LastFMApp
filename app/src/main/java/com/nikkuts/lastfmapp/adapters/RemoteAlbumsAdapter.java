@@ -53,7 +53,7 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                     .thumbnail(THUMBNAIL_SIZE)
                     .into(holder.mImage);
 
-            holder.mDetailsButton.setOnClickListener(view -> {
+            holder.mCardView.setOnClickListener(view -> {
                 Intent infoIntent = new Intent(view.getContext(), RemoteAlbumInfoActivity.class);
                 infoIntent.putExtra("album", albumName);
                 infoIntent.putExtra("artist", artistName);
@@ -75,14 +75,13 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                     });
                 }
                 else {
+                    holder.mSavedImage.setVisibility(View.GONE);
                     holder.mSaveButton.setOnClickListener(view -> {
                         holder.mSavedImage.setVisibility(View.VISIBLE);
                         saveRemoteAlbum(position);
                     });
                 }
             });
-
-
         }
     }
 

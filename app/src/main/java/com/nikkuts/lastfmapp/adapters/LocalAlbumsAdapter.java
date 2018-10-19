@@ -35,7 +35,7 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
                     .thumbnail(THUMBNAIL_SIZE)
                     .into(holder.mImage);
 
-            holder.mDetailsButton.setOnClickListener(view -> {
+            holder.mCardView.setOnClickListener(view -> {
                 Intent infoIntent = new Intent(view.getContext(), LocalAlbumInfoActivity.class);
                 infoIntent.putExtra("album", mAlbums.get(position).getName());
                 infoIntent.putExtra("artist", mAlbums.get(position).getArtist());

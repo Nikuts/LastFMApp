@@ -2,11 +2,11 @@ package com.nikkuts.lastfmapp.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,18 +46,18 @@ public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.A
 
         public AlbumsViewHolder(View itemView) {
             super(itemView);
+            mCardView = itemView.findViewById(R.id.cardview_album);
             mPrimaryText = itemView.findViewById(R.id.primary_text);
             mSubText = itemView.findViewById(R.id.sub_text);
             mImage = itemView.findViewById(R.id.media_image);
-            mDetailsButton = itemView.findViewById(R.id.action_button_1);
             mSaveButton = itemView.findViewById(R.id.action_button_2);
             mSavedImage = itemView.findViewById(R.id.action_button_2_saved);
         }
 
+        protected CardView mCardView;
         protected TextView mPrimaryText;
         protected TextView mSubText;
         protected ImageView mImage;
-        protected Button mDetailsButton;
         protected ImageButton mSaveButton;
         protected ImageView mSavedImage;
     }
