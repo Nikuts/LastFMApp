@@ -7,14 +7,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
-import com.nikkuts.lastfmapp.query.QueryViewModel;
+import com.nikkuts.lastfmapp.query.viewmodel.AlbumInfoViewModel;
 
 public class RemoteAlbumInfoActivity extends AlbumInfoActivity {
 
     @Override
     protected void initViewModel() {
-        mQueryViewModel = ViewModelProviders.of(this).get(QueryViewModel.class);
-        mAlbumInfo = mQueryViewModel.getAlbumInfoLiveData();
+        mAlbumInfoViewModel = ViewModelProviders.of(this).get(AlbumInfoViewModel.class);
+        mAlbumInfo = mAlbumInfoViewModel.getAlbumInfoLiveData();
         mAlbumInfo.observe(this, album -> {
 
             mPrimaryText.setText(album.getName());
@@ -30,16 +30,16 @@ public class RemoteAlbumInfoActivity extends AlbumInfoActivity {
                     .into(mMediaImage);
         });
 
-        mQueryError = mQueryViewModel.getHTTPErrorLiveData();
+        mQueryError = mAlbumInfoViewModel.getHTTPErrorLiveData();
         mQueryError.observe(this, error -> {
             mSpinner.setVisibility(View.GONE);
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
         });
 
-        mQueryViewModel.loadAlbumInfo(mArtistName, mAlbumName);
+        mAlbumInfoViewModel.loadAlbumInfo(mArtistName, mAlbumName);
     }
 
-    private QueryViewModel mQueryViewModel;
+    private AlbumInfoViewModel mAlbumInfoViewModel;
     private LiveData<Album> mAlbumInfo;
     private LiveData<String> mQueryError;
 }

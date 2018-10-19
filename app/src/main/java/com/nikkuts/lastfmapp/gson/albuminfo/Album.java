@@ -1,9 +1,10 @@
 package com.nikkuts.lastfmapp.gson.albuminfo;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.nikkuts.lastfmapp.gson.Image;
+
+import java.util.List;
 
 public class Album {
     public static final int EXTRALARGE_IMAGE_URL_INDEX = 3;

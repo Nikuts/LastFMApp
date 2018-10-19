@@ -3,11 +3,14 @@ package com.nikkuts.lastfmapp.query;
 import android.util.Log;
 
 import com.nikkuts.lastfmapp.gson.albuminfo.AlbuminfoMsg;
+import com.nikkuts.lastfmapp.gson.artist.ArtistSearchResults;
 import com.nikkuts.lastfmapp.gson.topalbums.TopalbumsMsg;
 import com.nikkuts.lastfmapp.query.api.ILastFmApi;
 import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
+import com.nikkuts.lastfmapp.query.listeners.IArtistsLoadedListener;
 import com.nikkuts.lastfmapp.query.listeners.IQueryErrorListener;
 import com.nikkuts.lastfmapp.query.listeners.ITopAlbumsLoadedListener;
+import com.nikkuts.lastfmapp.query.viewmodel.QueryViewModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,6 +23,7 @@ public class ApiManager {
     public static final String QUERY_BASE_URL = "http://ws.audioscrobbler.com";
     public static final String QUERY_TOPALBUMS_METHOD = "artist.gettopalbums";
     public static final String QUERY_ALBUMINFO_METHOD = "album.getInfo";
+    public static final String QUERY_ARTISTSEARCH_METHOD = "artist.search";
     public static final String QUERY_API_KEY = "1e88a3a6a8039f151b6870c55249d094";
     public static final String QUERY_FORMAT = "json";
 
@@ -43,7 +47,7 @@ public class ApiManager {
                     }
                     else {
                         if (mQueryErrorListener != null)
-                            mQueryErrorListener.onError("Artist not found");
+                            mQueryErrorListener.onError("Albums not found");
                     }
                 } else {
                     handleHTTPError(response.code());
@@ -83,6 +87,31 @@ public class ApiManager {
         });
     }
 
+    public void loadArtists(String artist, final int page) {
+        mLastFmApi.getArtists(QUERY_ARTISTSEARCH_METHOD, QUERY_API_KEY, artist, page, QUERY_FORMAT).enqueue(new Callback<ArtistSearchResults>() {
+            @Override
+            public void onResponse(Call<ArtistSearchResults> call, Response<ArtistSearchResults> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        mArtistsLoadedListener.onArtistsLoaded(response.body(), page);
+                    }
+                    else {
+                        if (mQueryErrorListener != null)
+                            mQueryErrorListener.onError("Artists not found");
+                    }
+                } else {
+                    handleHTTPError(response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArtistSearchResults> call, Throwable t) {
+                if (mQueryErrorListener != null)
+                    mQueryErrorListener.onError("Network failure");
+            }
+        });
+    }
+
     private void handleHTTPError(int code){
         if (mQueryErrorListener != null) {
             switch (code) {
@@ -114,8 +143,13 @@ public class ApiManager {
         this.mQueryErrorListener = mQueryErrorListener;
     }
 
+    public void setArtistsLoadedListener(IArtistsLoadedListener mArtistsLoadedListener) {
+        this.mArtistsLoadedListener = mArtistsLoadedListener;
+    }
+
     private ILastFmApi mLastFmApi;
     private IAlbumInfoLoadedListener mAlbumInfoLoadedListener;
     private ITopAlbumsLoadedListener mTopAlbumsLoadedListener;
     private IQueryErrorListener mQueryErrorListener;
+    private IArtistsLoadedListener mArtistsLoadedListener;
 }

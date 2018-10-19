@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.adaptors;
+package com.nikkuts.lastfmapp.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.gson.albuminfo.Track;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 

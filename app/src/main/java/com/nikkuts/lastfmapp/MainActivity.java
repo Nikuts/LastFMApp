@@ -1,10 +1,8 @@
 package com.nikkuts.lastfmapp;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.nikkuts.lastfmapp.adaptors.LocalAlbumsAdapter;
+import com.nikkuts.lastfmapp.adapters.LocalAlbumsAdapter;
 import com.nikkuts.lastfmapp.db.AlbumFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
@@ -79,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSearch() {
-        Intent searchIntent = new Intent(this, SearchActivity.class);
+        Intent searchIntent = new Intent(this, ArtistSearchActivity.class);
         startActivity(searchIntent);
     }
 

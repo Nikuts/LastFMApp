@@ -11,9 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nikkuts.lastfmapp.adaptors.TracksAdaptor;
-
-import java.util.List;
+import com.nikkuts.lastfmapp.adapters.TracksAdaptor;
 
 public abstract class AlbumInfoActivity extends AppCompatActivity {
     protected static final float THUMBNAIL_SIZE = 0.2f;

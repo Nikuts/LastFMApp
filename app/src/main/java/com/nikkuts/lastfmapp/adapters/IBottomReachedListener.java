@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.adaptors;
+package com.nikkuts.lastfmapp.adapters;
 
 public interface IBottomReachedListener {
     void onBottomReached(int position);

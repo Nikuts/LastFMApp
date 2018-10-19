@@ -19,10 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity"></activity>
-        <activity android:name=".RemoteAlbumInfoActivity"></activity>
-        <activity android:name=".LocalAlbumInfoActivity"></activity>
-
+        <activity android:name=".ArtistSearchActivity"/>
+        <activity android:name=".RemoteAlbumInfoActivity"/>
+        <activity android:name=".LocalAlbumInfoActivity"/>
+        <activity android:name=".TopAlbumsActivity"/>
     </application>
 
 </manifest>

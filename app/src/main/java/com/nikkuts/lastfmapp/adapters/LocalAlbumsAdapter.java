@@ -1,11 +1,10 @@
-package com.nikkuts.lastfmapp.adaptors;
+package com.nikkuts.lastfmapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.nikkuts.lastfmapp.AlbumInfoActivity;
 import com.nikkuts.lastfmapp.LocalAlbumInfoActivity;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;

@@ -1,4 +1,4 @@
-package com.nikkuts.lastfmapp.adaptors;
+package com.nikkuts.lastfmapp.adapters;
 
 import android.app.Application;
 import android.arch.lifecycle.LifecycleOwner;
@@ -11,9 +11,7 @@ import com.bumptech.glide.Glide;
 import com.nikkuts.lastfmapp.RemoteAlbumInfoActivity;
 import com.nikkuts.lastfmapp.db.AlbumFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
-import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
-import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.ApiManager;
