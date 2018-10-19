@@ -17,8 +17,10 @@ public class RemoteAlbumInfoActivity extends AlbumInfoActivity {
         mAlbumInfo = mAlbumInfoViewModel.getAlbumInfoLiveData();
         mAlbumInfo.observe(this, album -> {
 
-            mPrimaryText.setText(album.getName());
-            mSubText.setText(album.getArtist());
+            mToolbar.setTitle(album.getName());
+
+            mTitle.setText(album.getName());
+            mSubtitle.setText(album.getArtist());
 
             mSpinner.setVisibility(View.GONE);
 

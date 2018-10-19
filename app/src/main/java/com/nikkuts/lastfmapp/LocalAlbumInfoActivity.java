@@ -22,8 +22,11 @@ public class LocalAlbumInfoActivity extends AlbumInfoActivity {
             Album album = AlbumFactory.createAlbumFromEntities(albumWithTracks.getAlbumInfoEntity(),
                     albumWithTracks.getTrackEntities());
 
-            mPrimaryText.setText(album.getName());
-            mSubText.setText(album.getArtist());
+            mToolbar.setTitle(album.getName());
+
+            mTitle.setText(album.getName());
+            mSubtitle.setText(album.getArtist());
+
             mTracksAdapter.setTracks(album.getTracks().getTrack());
 
             Glide.with(mMediaImage)

@@ -31,15 +31,15 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
 
     private void initLayout(){
 
-        Toolbar toolbar = findViewById(R.id.toolbar_transparent);
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar_transparent);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mMediaImage = findViewById(R.id.media_image);
-        mPrimaryText = findViewById(R.id.primary_text);
-        mSubText = findViewById(R.id.sub_text);
+        mTitle = findViewById(R.id.title);
+        mSubtitle = findViewById(R.id.subtitle);
 
         mTracksView = findViewById(R.id.recyclerview_tracks);
         mTracksView.setHasFixedSize(true);
@@ -64,8 +64,9 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
     }
 
     protected ImageView mMediaImage;
-    protected TextView mPrimaryText;
-    protected TextView mSubText;
+    protected Toolbar mToolbar;
+    protected TextView mTitle;
+    protected TextView mSubtitle;
     protected ProgressBar mSpinner;
 
     protected RecyclerView mTracksView;
