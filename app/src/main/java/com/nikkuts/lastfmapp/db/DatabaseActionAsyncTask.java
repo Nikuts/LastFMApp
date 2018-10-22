@@ -28,9 +28,11 @@ public class DatabaseActionAsyncTask extends AsyncTask<Album, Void, Void> {
                 mDatabase.trackDao().deleteAllTracksByAlbumId(albumInfoEntity.get(0).getId());
                 break;
             case INSERT:
-                long albumId = mDatabase.albumDao().insert(new AlbumInfoEntity(params[0]));
-                for (Track track : params[0].getTracks().getTrack()) {
-                    mDatabase.trackDao().insert(new TrackEntity(albumId, track.getName()));
+                if (mDatabase.albumDao().getAlbums(params[0].getArtist(), params[0].getName()).size() == 0) {
+                    long albumId = mDatabase.albumDao().insert(new AlbumInfoEntity(params[0]));
+                    for (Track track : params[0].getTracks().getTrack()) {
+                        mDatabase.trackDao().insert(new TrackEntity(albumId, track.getName()));
+                    }
                 }
                 break;
             default:
