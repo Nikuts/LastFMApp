@@ -7,11 +7,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nikkuts.lastfmapp.adapters.TracksAdaptor;
+import com.nikkuts.lastfmapp.db.AlbumsDatabase;
+import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
+import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 public abstract class AlbumInfoActivity extends AppCompatActivity {
     protected static final float THUMBNAIL_SIZE = 0.2f;
@@ -27,6 +31,12 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
 
         initLayout();
         initViewModel();
+
+        setIsLocal();
+        setFloatButtonImage();
+        mSaveButton.setOnClickListener(view -> {
+            onSaveClick();
+        });
     }
 
     private void initLayout(){
@@ -53,9 +63,33 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
 
         mSpinner = findViewById(R.id.progressBar);
         mSpinner.setVisibility(View.VISIBLE);
+
+        mSaveButton = findViewById(R.id.floating_action_button);
     }
 
     protected abstract void initViewModel();
+    protected abstract void setIsLocal();
+
+    protected void setFloatButtonImage(){
+        if (mIsLocal){
+            mSaveButton.setImageResource(R.drawable.ic_favorite_white_24dp);
+        }
+        else {
+            mSaveButton.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+        }
+    }
+    protected void onSaveClick() {
+        if (mCurrentAlbum != null) {
+            if (mIsLocal) {
+                mSaveButton.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(this), DatabaseActionAsyncTask.Action.DELETE).execute(mCurrentAlbum);
+            } else {
+                mSaveButton.setImageResource(R.drawable.ic_favorite_white_24dp);
+                new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(this), DatabaseActionAsyncTask.Action.INSERT).execute(mCurrentAlbum);
+            }
+            mIsLocal = !mIsLocal;
+        }
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -68,10 +102,14 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
     protected TextView mTitle;
     protected TextView mSubtitle;
     protected ProgressBar mSpinner;
+    protected ImageButton mSaveButton;
 
     protected RecyclerView mTracksView;
     protected TracksAdaptor mTracksAdapter;
 
     protected String mArtistName;
     protected String mAlbumName;
+
+    protected boolean mIsLocal;
+    protected Album mCurrentAlbum;
 }

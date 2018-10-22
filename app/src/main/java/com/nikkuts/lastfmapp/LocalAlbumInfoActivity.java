@@ -1,6 +1,8 @@
 package com.nikkuts.lastfmapp;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.os.Bundle;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -10,32 +12,44 @@ import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 public class LocalAlbumInfoActivity extends AlbumInfoActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected void initViewModel() {
         mAlbumsDatabaseViewModel = new AlbumsDatabaseViewModel(this.getApplication());
-        mAlbumLiveData = mAlbumsDatabaseViewModel.getAlbumWithTracksLiveData(mArtistName, mAlbumName);
+        mAlbumLiveData = mAlbumsDatabaseViewModel.getAlbumWithTracksLiveData(this, mArtistName, mAlbumName);
         mAlbumLiveData.observe(this, albumWithTracks -> {
 
             mSpinner.setVisibility(View.GONE);
 
-            Album album = AlbumFactory.createAlbumFromEntities(albumWithTracks.getAlbumInfoEntity(),
+            mCurrentAlbum = AlbumFactory.createAlbumFromEntities(albumWithTracks.getAlbumInfoEntity(),
                     albumWithTracks.getTrackEntities());
 
-            mToolbar.setTitle(album.getName());
+            mToolbar.setTitle(mCurrentAlbum.getName());
 
-            mTitle.setText(album.getName());
-            mSubtitle.setText(album.getArtist());
+            mTitle.setText(mCurrentAlbum.getName());
+            mSubtitle.setText(mCurrentAlbum.getArtist());
 
-            mTracksAdapter.setTracks(album.getTracks().getTrack());
+            mTracksAdapter.setTracks(mCurrentAlbum.getTracks().getTrack());
 
             Glide.with(mMediaImage)
-                    .load(album.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
+                    .load(mCurrentAlbum.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
                     .thumbnail(THUMBNAIL_SIZE)
                     .into(mMediaImage);
+
+            mAlbumLiveData.removeObservers(this);
         });
     }
 
+    @Override
+    protected void setIsLocal() {
+        mIsLocal = true;
+    }
+
     private AlbumsDatabaseViewModel mAlbumsDatabaseViewModel;
-    private LiveData<AlbumWithTracks> mAlbumLiveData;
+    private MutableLiveData<AlbumWithTracks> mAlbumLiveData;
+
 }

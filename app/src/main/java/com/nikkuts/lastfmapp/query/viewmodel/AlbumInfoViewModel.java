@@ -8,7 +8,7 @@ import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
 
 public class AlbumInfoViewModel extends QueryViewModel implements IAlbumInfoLoadedListener {
 
-    public LiveData<Album> getAlbumInfoLiveData() {
+    public MutableLiveData<Album> getAlbumInfoLiveData() {
         if (mAlbumInfo == null) {
             mAlbumInfo = new MutableLiveData<>();
         }

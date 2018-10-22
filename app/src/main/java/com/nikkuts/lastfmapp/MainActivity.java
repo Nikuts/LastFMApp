@@ -1,6 +1,7 @@
 package com.nikkuts.lastfmapp;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,16 +36,20 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
 
         mDatabaseViewModel = new AlbumsDatabaseViewModel(this.getApplication());
-        mAlbumWithTracksLiveData = mDatabaseViewModel.getAllAlbumsWithTracksLiveData();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAlbumWithTracksLiveData = mDatabaseViewModel.getAllAlbumsWithTracksLiveData(this);
         mAlbumWithTracksLiveData.observe(this, albumWithTracksList -> {
-            if (mLastLocalAlbumsCount < albumWithTracksList.size()){ //item removing is handled by adaptor
-                List<Album> albums = new ArrayList<>();
-                for (AlbumWithTracks album : albumWithTracksList){
-                    albums.add(AlbumFactory.createAlbumFromEntities(album.getAlbumInfoEntity(), album.getTrackEntities()));
-                }
-                mAdapter.setAlbums(albums);
+            List<Album> albums = new ArrayList<>();
+            for (AlbumWithTracks album : albumWithTracksList){
+                albums.add(AlbumFactory.createAlbumFromEntities(album.getAlbumInfoEntity(), album.getTrackEntities()));
             }
-            mLastLocalAlbumsCount = albumWithTracksList.size();
+            mAdapter.setAlbums(albums);
+            mAlbumWithTracksLiveData.removeObservers(this);
         });
     }
 
@@ -97,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(searchIntent);
     }
 
-    private LiveData<List<AlbumWithTracks>> mAlbumWithTracksLiveData;
+    private MutableLiveData<List<AlbumWithTracks>> mAlbumWithTracksLiveData;
     private AlbumsDatabaseViewModel mDatabaseViewModel;
 
     private RecyclerView mRecyclerView;

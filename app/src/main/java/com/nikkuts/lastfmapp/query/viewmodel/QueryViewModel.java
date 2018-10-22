@@ -17,7 +17,7 @@ public abstract class QueryViewModel extends ViewModel implements IQueryErrorLis
 
     public abstract void setListener();
 
-    public LiveData<String> getHTTPErrorLiveData() {
+    public MutableLiveData<String> getHTTPErrorLiveData() {
         if (mQueryError == null) {
             mQueryError = new MutableLiveData<>();
         }

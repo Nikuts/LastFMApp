@@ -1,6 +1,7 @@
 package com.nikkuts.lastfmapp;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -99,6 +100,6 @@ public class TopAlbumsActivity extends AppCompatActivity implements IBottomReach
     private RemoteAlbumsAdapter mAdapter;
 
     private TopAlbumsViewModel mTopAlbumsViewModel;
-    private LiveData<Topalbums> mTopAlbums;
-    private LiveData<String> mQueryError;
+    private MutableLiveData<Topalbums> mTopAlbums;
+    private MutableLiveData<String> mQueryError;
 }

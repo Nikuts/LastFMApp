@@ -2,6 +2,7 @@ package com.nikkuts.lastfmapp;
 
 import android.app.Activity;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -130,6 +131,6 @@ public class ArtistSearchActivity extends AppCompatActivity implements IBottomRe
     private ArtistsAdapter mAdapter;
 
     private ArtistsViewModel mArtistsViewModel;
-    private LiveData<ArtistSearchResults> mArtistSearchResults;
-    private LiveData<String> mQueryError;
+    private MutableLiveData<ArtistSearchResults> mArtistSearchResults;
+    private MutableLiveData<String> mQueryError;
 }

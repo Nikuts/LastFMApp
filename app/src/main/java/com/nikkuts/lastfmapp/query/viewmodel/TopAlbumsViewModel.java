@@ -17,7 +17,7 @@ public class TopAlbumsViewModel extends QueryViewModel implements ITopAlbumsLoad
         mApiManager.loadTopAlbums(artist, page);
     }
 
-    public LiveData<Topalbums> getTopAlbumsLiveData(){
+    public MutableLiveData<Topalbums> getTopAlbumsLiveData(){
         if (mTopAlbums == null) {
             mTopAlbums = new MutableLiveData<>();
         }

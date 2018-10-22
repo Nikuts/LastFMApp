@@ -16,7 +16,7 @@ public class ArtistsViewModel extends QueryViewModel implements IArtistsLoadedLi
         mApiManager.loadArtists(artist, page);
     }
 
-    public LiveData<ArtistSearchResults> getArtistSearchResultsLiveData() {
+    public MutableLiveData<ArtistSearchResults> getArtistSearchResultsLiveData() {
         if (mArtistSearchResults == null) {
             mArtistSearchResults = new MutableLiveData<>();
         }
