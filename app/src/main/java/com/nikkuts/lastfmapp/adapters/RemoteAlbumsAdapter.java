@@ -19,7 +19,9 @@ import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.ApiManager;
 import com.nikkuts.lastfmapp.query.listeners.IAlbumInfoLoadedListener;
+import com.nikkuts.lastfmapp.utils.AlbumsDiffUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoadedListener {
@@ -27,17 +29,31 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
     public RemoteAlbumsAdapter(Context context) {
         super(context);
         mAlbumsDatabaseViewModel = new AlbumsDatabaseViewModel((Application) context.getApplicationContext());
+        mSavedAlbums = new ArrayList<>();
+        mIsAllDataChanged = false;
+        mDiffUtil = new AlbumsDiffUtil();
     }
 
     public void setAlbums(Topalbums albums){
         this.mAlbums = albums;
-
+        mIsAllDataChanged = true;
         if (mSavedAlbumsLiveData == null){
             mSavedAlbumsLiveData = mAlbumsDatabaseViewModel.getAlbumsWithTracksLiveDataByArtist((LifecycleOwner) mContext,
                     mAlbums.getAlbum().get(0).getArtist().getName());
-        }
 
-        notifyDataSetChanged();
+            mSavedAlbumsLiveData.observe((LifecycleOwner) mContext, albumWithTracks -> {
+                if (!mIsAllDataChanged) {
+                    List<AlbumWithTracks> diffList = mDiffUtil.getDiffList(mSavedAlbums, albumWithTracks);
+                    for (AlbumWithTracks album : diffList) {
+                        notifyItemChanged(mDiffUtil.getLocalToRemoteIndex(album, mAlbums.getAlbum()));
+                    }
+                } else {
+                    notifyDataSetChanged();
+                    mIsAllDataChanged = false;
+                }
+                mSavedAlbums = albumWithTracks;
+            });
+        }
      }
 
     public void setBottomReachedListener(IBottomReachedListener bottomReachedListener){
@@ -64,36 +80,34 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.mImage);
 
-            mSavedAlbumsLiveData.observe((LifecycleOwner) mContext, albumWithTracks -> {
-                AlbumWithTracks currentLocalAlbum = albumWithTracks.stream().filter(p ->
-                        p.getAlbumInfoEntity().getAlbumName().equals(albumName))
-                        .findFirst()
-                        .orElse(null);
+            AlbumWithTracks currentLocalAlbum = mSavedAlbums.stream().filter(p ->
+                    p.getAlbumInfoEntity().getAlbumName().equals(albumName))
+                    .findFirst()
+                    .orElse(null);
 
-                if (currentLocalAlbum != null) {
-                    holder.mSavedImage.setVisibility(View.VISIBLE);
-                    holder.mSaveButton.setOnClickListener(view -> {
-                        holder.mSavedImage.setVisibility(View.GONE);
-                        deleteLocalAlbum(currentLocalAlbum);
-                    });
-
-                    holder.mCardView.setOnClickListener(view -> {
-                        Intent infoIntent = setupInfoIntent(view, albumName, artistName, true);
-                        view.getContext().startActivity(infoIntent);
-                    });
-                } else {
+            if (currentLocalAlbum != null) {
+                holder.mSavedImage.setVisibility(View.VISIBLE);
+                holder.mSaveButton.setOnClickListener(view -> {
                     holder.mSavedImage.setVisibility(View.GONE);
-                    holder.mSaveButton.setOnClickListener(view -> {
-                        holder.mSavedImage.setVisibility(View.VISIBLE);
-                        saveRemoteAlbum(position);
-                    });
+                    deleteLocalAlbum(currentLocalAlbum);
+                });
 
-                    holder.mCardView.setOnClickListener(view -> {
-                        Intent infoIntent = setupInfoIntent(view, albumName, artistName, false);
-                        view.getContext().startActivity(infoIntent);
-                    });
-                }
-            });
+                holder.mCardView.setOnClickListener(view -> {
+                    Intent infoIntent = setupInfoIntent(view, albumName, artistName, true);
+                    view.getContext().startActivity(infoIntent);
+                });
+            } else {
+                holder.mSavedImage.setVisibility(View.GONE);
+                holder.mSaveButton.setOnClickListener(view -> {
+                    holder.mSavedImage.setVisibility(View.VISIBLE);
+                    saveRemoteAlbum(position);
+                });
+
+                holder.mCardView.setOnClickListener(view -> {
+                    Intent infoIntent = setupInfoIntent(view, albumName, artistName, false);
+                    view.getContext().startActivity(infoIntent);
+                });
+            }
         }
     }
 
@@ -140,4 +154,7 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
     private Topalbums mAlbums;
     private AlbumsDatabaseViewModel mAlbumsDatabaseViewModel;
     private MutableLiveData<List<AlbumWithTracks>> mSavedAlbumsLiveData;
+    private List<AlbumWithTracks> mSavedAlbums;
+    private final AlbumsDiffUtil mDiffUtil;
+    private boolean mIsAllDataChanged;
 }
