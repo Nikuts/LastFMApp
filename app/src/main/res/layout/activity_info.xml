@@ -28,9 +28,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:background="@color/gray"
-                    app:layout_collapseMode="parallax"
-                    android:fitsSystemWindows="true" />
+                    android:fitsSystemWindows="true"
+                    app:layout_collapseMode="parallax" />
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/header_text_layout"

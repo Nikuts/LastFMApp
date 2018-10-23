@@ -1,14 +1,14 @@
 package com.nikkuts.lastfmapp;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Bundle;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.nikkuts.lastfmapp.db.AlbumFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
+import com.nikkuts.lastfmapp.glide.GlideApp;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 public class LocalAlbumInfoActivity extends AlbumInfoActivity {
@@ -35,9 +35,12 @@ public class LocalAlbumInfoActivity extends AlbumInfoActivity {
 
             mTracksAdapter.setTracks(mCurrentAlbum.getTracks().getTrack());
 
-            Glide.with(mMediaImage)
+            GlideApp.with(mMediaImage)
                     .load(mCurrentAlbum.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
-                    .thumbnail(THUMBNAIL_SIZE)
+                    .placeholder(R.drawable.ic_placeholder_gray_24dp)
+                    .error(R.drawable.ic_placeholder_gray_24dp)
+                    .fallback(R.drawable.ic_placeholder_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(mMediaImage);
 
             mAlbumLiveData.removeObservers(this);

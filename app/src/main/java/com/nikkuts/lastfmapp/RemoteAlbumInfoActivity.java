@@ -1,13 +1,13 @@
 package com.nikkuts.lastfmapp;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.nikkuts.lastfmapp.glide.GlideApp;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.query.viewmodel.AlbumInfoViewModel;
 
@@ -35,9 +35,12 @@ public class RemoteAlbumInfoActivity extends AlbumInfoActivity {
 
             mTracksAdapter.setTracks(mCurrentAlbum.getTracks().getTrack());
 
-            Glide.with(mMediaImage)
+            GlideApp.with(mMediaImage)
                     .load(mCurrentAlbum.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
-                    .thumbnail(THUMBNAIL_SIZE)
+                    .placeholder(R.drawable.ic_placeholder_gray_24dp)
+                    .error(R.drawable.ic_placeholder_gray_24dp)
+                    .fallback(R.drawable.ic_placeholder_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(mMediaImage);
 
             mAlbumInfo.removeObservers(this);

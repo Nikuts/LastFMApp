@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.nikkuts.lastfmapp.LocalAlbumInfoActivity;
+import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
+import com.nikkuts.lastfmapp.glide.GlideApp;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 import java.util.List;
@@ -30,9 +32,12 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
             holder.mPrimaryText.setText(mAlbums.get(position).getName());
             holder.mSubText.setText(mAlbums.get(position).getArtist());
 
-            Glide.with(holder.mImage)
+            GlideApp.with(holder.mImage)
                     .load(mAlbums.get(position).getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText())
-                    .thumbnail(THUMBNAIL_SIZE)
+                    .placeholder(R.drawable.ic_placeholder_gray_24dp)
+                    .error(R.drawable.ic_placeholder_gray_24dp)
+                    .fallback(R.drawable.ic_placeholder_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.mImage);
 
             holder.mCardView.setOnClickListener(view -> {

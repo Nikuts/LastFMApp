@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.nikkuts.lastfmapp.R;
 
 public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
-    protected static final float THUMBNAIL_SIZE = 0.2f;
 
     public AlbumsAdapter(Context context) {
         this.mContext = context;
@@ -31,7 +30,6 @@ public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.A
     @Override
     public void onBindViewHolder(@NonNull AlbumsViewHolder holder, int position) {
         bindAlbumsViewHolder(holder, position);
-
     }
 
     @Override

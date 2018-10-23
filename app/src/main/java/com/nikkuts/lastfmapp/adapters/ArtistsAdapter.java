@@ -11,16 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.TopAlbumsActivity;
+import com.nikkuts.lastfmapp.glide.GlideApp;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.artist.Artist;
 
 import java.util.List;
 
 public class ArtistsAdapter extends RecyclerView.Adapter<ArtistsAdapter.ArtistViewHolder> {
-    public static final float THUMBNAIL_SIZE = 0.2f;
 
     public void setArtists(List<Artist> artists){
         this.mArtists = artists;
@@ -51,9 +51,12 @@ public class ArtistsAdapter extends RecyclerView.Adapter<ArtistsAdapter.ArtistVi
                 loadTopAlbums(holder.mCardView.getContext(), mArtists.get(position).getName());
             });
 
-            Glide.with(holder.mImage)
+            GlideApp.with(holder.mImage)
                     .load(mArtists.get(position).getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText())
-                    .thumbnail(THUMBNAIL_SIZE)
+                    .placeholder(R.drawable.ic_placeholder_gray_24dp)
+                    .error(R.drawable.ic_placeholder_gray_24dp)
+                    .fallback(R.drawable.ic_placeholder_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.mImage);
         }
     }

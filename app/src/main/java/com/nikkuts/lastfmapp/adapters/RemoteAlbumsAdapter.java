@@ -2,17 +2,19 @@ package com.nikkuts.lastfmapp.adapters;
 
 import android.app.Application;
 import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.nikkuts.lastfmapp.LocalAlbumInfoActivity;
+import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.RemoteAlbumInfoActivity;
 import com.nikkuts.lastfmapp.db.AlbumFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
+import com.nikkuts.lastfmapp.glide.GlideApp;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.topalbums.Topalbums;
 import com.nikkuts.lastfmapp.query.ApiManager;
@@ -29,18 +31,23 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
 
     public void setAlbums(Topalbums albums){
         this.mAlbums = albums;
+
+        if (mSavedAlbumsLiveData == null){
+            mSavedAlbumsLiveData = mAlbumsDatabaseViewModel.getAlbumsWithTracksLiveDataByArtist((LifecycleOwner) mContext,
+                    mAlbums.getAlbum().get(0).getArtist().getName());
+        }
+
         notifyDataSetChanged();
-    }
+     }
 
     public void setBottomReachedListener(IBottomReachedListener bottomReachedListener){
-
         this.mOnBottomReachedListener = bottomReachedListener;
     }
 
     @Override
     protected void bindAlbumsViewHolder(final AlbumsViewHolder holder, final int position) {
         if (mAlbums != null) {
-            if (mOnBottomReachedListener != null && position == mAlbums.getAlbum().size() - 5){
+            if (mOnBottomReachedListener != null && position == mAlbums.getAlbum().size() - 5) {
                 mOnBottomReachedListener.onBottomReached(position);
             }
             final String albumName = mAlbums.getAlbum().get(position).getName();
@@ -49,20 +56,21 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
             holder.mPrimaryText.setText(albumName);
             holder.mSubText.setText(artistName);
 
-            Glide.with(holder.mImage)
+            GlideApp.with(holder.mImage)
                     .load(mAlbums.getAlbum().get(position).getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText())
-                    .thumbnail(THUMBNAIL_SIZE)
+                    .placeholder(R.drawable.ic_placeholder_gray_24dp)
+                    .error(R.drawable.ic_placeholder_gray_24dp)
+                    .fallback(R.drawable.ic_placeholder_gray_24dp)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.mImage);
 
-            mSavedAlbums = mAlbumsDatabaseViewModel.getAlbumsWithTracksLiveDataByArtist((LifecycleOwner) mContext,
-                    mAlbums.getAlbum().get(position).getArtist().getName());
-            mSavedAlbums.observe((LifecycleOwner) mContext, albumWithTracks -> {
+            mSavedAlbumsLiveData.observe((LifecycleOwner) mContext, albumWithTracks -> {
                 AlbumWithTracks currentLocalAlbum = albumWithTracks.stream().filter(p ->
                         p.getAlbumInfoEntity().getAlbumName().equals(albumName))
                         .findFirst()
                         .orElse(null);
 
-                if (currentLocalAlbum != null){
+                if (currentLocalAlbum != null) {
                     holder.mSavedImage.setVisibility(View.VISIBLE);
                     holder.mSaveButton.setOnClickListener(view -> {
                         holder.mSavedImage.setVisibility(View.GONE);
@@ -73,8 +81,7 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                         Intent infoIntent = setupInfoIntent(view, albumName, artistName, true);
                         view.getContext().startActivity(infoIntent);
                     });
-                }
-                else {
+                } else {
                     holder.mSavedImage.setVisibility(View.GONE);
                     holder.mSaveButton.setOnClickListener(view -> {
                         holder.mSavedImage.setVisibility(View.VISIBLE);
@@ -91,7 +98,7 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
     }
 
     private Intent setupInfoIntent(View view, String albumName, String artistName, boolean isLocalAlbum){
-        Intent infoIntent = null;
+        Intent infoIntent;
         if (isLocalAlbum){
             infoIntent = new Intent(view.getContext(), LocalAlbumInfoActivity.class);
         }
@@ -132,5 +139,5 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
     private IBottomReachedListener mOnBottomReachedListener;
     private Topalbums mAlbums;
     private AlbumsDatabaseViewModel mAlbumsDatabaseViewModel;
-    private LiveData<List<AlbumWithTracks>> mSavedAlbums;
+    private MutableLiveData<List<AlbumWithTracks>> mSavedAlbumsLiveData;
 }
