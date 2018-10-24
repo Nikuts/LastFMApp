@@ -9,7 +9,7 @@ import com.nikkuts.lastfmapp.db.entity.TrackEntity;
 
 @Dao
 public interface TrackDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     void insert(TrackEntity track);
 
     @Query("DELETE FROM TrackEntity WHERE album_id = :albumId")

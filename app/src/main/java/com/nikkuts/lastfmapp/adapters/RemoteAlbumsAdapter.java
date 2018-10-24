@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.widget.CheckBox;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.nikkuts.lastfmapp.LocalAlbumInfoActivity;
@@ -31,6 +32,7 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
         super(context);
         mAlbumsDatabaseViewModel = new AlbumsDatabaseViewModel((Application) context.getApplicationContext());
         mSavedAlbums = new ArrayList<>();
+        mApiManager = new ApiManager();
         mIsAllDataChanged = false;
     }
 
@@ -92,13 +94,13 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
                 holder.mLikeCheckBox.setChecked(false);
             }
 
-            holder.mLikeCheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
-                if (b){
-                    saveRemoteAlbum(position);
-                }
-                else {
-                    deleteLocalAlbum(position);
-                }
+            holder.mLikeCheckBox.setOnClickListener(view -> {
+               if (((CheckBox)view).isChecked()){
+                   saveRemoteAlbum(position);
+               }
+               else {
+                   deleteLocalAlbum(position);
+               }
             });
 
             holder.mCardView.setOnClickListener(view -> {
@@ -136,9 +138,8 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
         mAlbumsDatabaseViewModel.insertItem(
                 AlbumInfoFactory.createAlbumInfoFromTopAlbum(mAlbums.getAlbum().get(position)));
 
-        ApiManager apiManager = new ApiManager();
-        apiManager.setAlbumInfoLoadedListener(RemoteAlbumsAdapter.this);
-        apiManager.loadAlbumInfo(mAlbums.getAlbum().get(position).getArtist().getName(),
+        mApiManager.setAlbumInfoLoadedListener(RemoteAlbumsAdapter.this);
+        mApiManager.loadAlbumInfo(mAlbums.getAlbum().get(position).getArtist().getName(),
                 mAlbums.getAlbum().get(position).getName());
     }
 
@@ -152,10 +153,11 @@ public class RemoteAlbumsAdapter extends AlbumsAdapter implements IAlbumInfoLoad
 
     @Override
     public void onInfoLoaded(final Album album) {
-        //mAlbumsDatabaseViewModel.insertItem(album);
         mAlbumsDatabaseViewModel.updateItem(album);
+        mApiManager.removeAlbumInfoLoadedListener();
     }
 
+    private ApiManager mApiManager;
     private IBottomReachedListener mOnBottomReachedListener;
     private Topalbums mAlbums;
     private AlbumsDatabaseViewModel mAlbumsDatabaseViewModel;

@@ -67,7 +67,7 @@ public class ApiManager {
             @Override
             public void onResponse(Call<AlbuminfoMsg> call, Response<AlbuminfoMsg> response) {
                 if (response.isSuccessful()) {
-                    if (response.body().getAlbum() != null) {
+                    if (response.body().getAlbum() != null && mAlbumInfoLoadedListener != null) {
                         mAlbumInfoLoadedListener.onInfoLoaded(response.body().getAlbum());
                     }
                     else {
@@ -145,6 +145,10 @@ public class ApiManager {
 
     public void setArtistsLoadedListener(IArtistsLoadedListener mArtistsLoadedListener) {
         this.mArtistsLoadedListener = mArtistsLoadedListener;
+    }
+
+    public void removeAlbumInfoLoadedListener(){
+        this.mAlbumInfoLoadedListener = null;
     }
 
     private ILastFmApi mLastFmApi;
