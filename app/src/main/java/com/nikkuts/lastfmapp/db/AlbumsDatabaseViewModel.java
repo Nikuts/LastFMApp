@@ -50,5 +50,9 @@ public class AlbumsDatabaseViewModel extends AndroidViewModel {
         new DatabaseActionAsyncTask(mAlbumsDatabase, DatabaseActionAsyncTask.Action.INSERT).execute(album);
     }
 
+    public void updateItem(Album album) {
+        new DatabaseActionAsyncTask(mAlbumsDatabase, DatabaseActionAsyncTask.Action.UPDATE).execute(album);
+    }
+
     private AlbumsDatabase mAlbumsDatabase;
 }

@@ -4,8 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Image {
-
     public static final int IMAGES_COUNT = 6;
+    public static final int EXTRALARGE_IMAGE_URL_INDEX = 3;
+    public static final int LARGE_IMAGE_URL_INDEX = 2;
 
     @SerializedName("#text")
     @Expose

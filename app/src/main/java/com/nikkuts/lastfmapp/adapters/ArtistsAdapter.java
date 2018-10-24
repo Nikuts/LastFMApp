@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.TopAlbumsActivity;
 import com.nikkuts.lastfmapp.glide.GlideApp;
+import com.nikkuts.lastfmapp.gson.Image;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 import com.nikkuts.lastfmapp.gson.artist.Artist;
 
@@ -52,7 +53,7 @@ public class ArtistsAdapter extends RecyclerView.Adapter<ArtistsAdapter.ArtistVi
             });
 
             GlideApp.with(holder.mImage)
-                    .load(mArtists.get(position).getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText())
+                    .load(mArtists.get(position).getImage().get(Image.LARGE_IMAGE_URL_INDEX).getText())
                     .placeholder(R.drawable.ic_placeholder_gray_24dp)
                     .error(R.drawable.ic_placeholder_gray_24dp)
                     .fallback(R.drawable.ic_placeholder_gray_24dp)

@@ -1,6 +1,5 @@
 package com.nikkuts.lastfmapp;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.nikkuts.lastfmapp.adapters.LocalAlbumsAdapter;
-import com.nikkuts.lastfmapp.db.AlbumFactory;
+import com.nikkuts.lastfmapp.db.AlbumInfoFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         mAlbumWithTracksLiveData.observe(this, albumWithTracksList -> {
             List<Album> albums = new ArrayList<>();
             for (AlbumWithTracks album : albumWithTracksList){
-                albums.add(AlbumFactory.createAlbumFromEntities(album.getAlbumInfoEntity(), album.getTrackEntities()));
+                albums.add(AlbumInfoFactory.createAlbumInfoFromEntities(album.getAlbumInfoEntity(), album.getTrackEntities()));
             }
             mAdapter.setAlbums(albums);
             mAlbumWithTracksLiveData.removeObservers(this);
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                viewHolder.itemView.findViewById(R.id.action_button_2).callOnClick();
+                viewHolder.itemView.findViewById(R.id.checkbox_like).callOnClick();
             }
         };
 

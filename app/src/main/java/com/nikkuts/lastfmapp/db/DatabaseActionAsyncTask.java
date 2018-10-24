@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DatabaseActionAsyncTask extends AsyncTask<Album, Void, Void> {
 
-    public enum Action {DELETE, INSERT}
+    public enum Action {DELETE, INSERT, UPDATE}
 
     public DatabaseActionAsyncTask(AlbumsDatabase albumsDatabase, Action action) {
         mDatabase = albumsDatabase;
@@ -22,19 +22,39 @@ public class DatabaseActionAsyncTask extends AsyncTask<Album, Void, Void> {
     protected Void doInBackground(final Album... params) {
 
         switch (mAction){
-            case DELETE:
+            case DELETE: {
                 List<AlbumInfoEntity> albumInfoEntity = mDatabase.albumDao().getAlbums(params[0].getArtist(), params[0].getName());
-                mDatabase.albumDao().delete(albumInfoEntity.get(0));
-                mDatabase.trackDao().deleteAllTracksByAlbumId(albumInfoEntity.get(0).getId());
+                if (albumInfoEntity != null && albumInfoEntity.size() > 0) {
+                    mDatabase.albumDao().delete(albumInfoEntity.get(0));
+                    mDatabase.trackDao().deleteAllTracksByAlbumId(albumInfoEntity.get(0).getId());
+                }
                 break;
+            }
             case INSERT:
                 if (mDatabase.albumDao().getAlbums(params[0].getArtist(), params[0].getName()).size() == 0) {
                     long albumId = mDatabase.albumDao().insert(new AlbumInfoEntity(params[0]));
-                    for (Track track : params[0].getTracks().getTrack()) {
-                        mDatabase.trackDao().insert(new TrackEntity(albumId, track.getName()));
+                    if (params[0].getTracks() != null) {
+                        for (Track track : params[0].getTracks().getTrack()) {
+                            mDatabase.trackDao().insert(new TrackEntity(albumId, track.getName()));
+                        }
                     }
                 }
                 break;
+            case UPDATE:
+            {
+                List<AlbumInfoEntity> albumInfoEntity = mDatabase.albumDao().getAlbums(params[0].getArtist(), params[0].getName());
+                if (albumInfoEntity != null && albumInfoEntity.size() > 0) {
+                    AlbumInfoEntity updatedAlbumInfoEntity = new AlbumInfoEntity(params[0]);
+                    updatedAlbumInfoEntity.setId(albumInfoEntity.get(0).getId());
+                    mDatabase.albumDao().update(updatedAlbumInfoEntity);
+                    if (params[0].getTracks().getTrack() != null) {
+                        for (Track track : params[0].getTracks().getTrack()) {
+                            mDatabase.trackDao().insert(new TrackEntity(albumInfoEntity.get(0).getId(), track.getName()));
+                        }
+                    }
+                }
+                break;
+            }
             default:
                 break;
         }

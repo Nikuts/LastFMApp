@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,16 +49,15 @@ public abstract class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.A
             mPrimaryText = itemView.findViewById(R.id.primary_text);
             mSubText = itemView.findViewById(R.id.sub_text);
             mImage = itemView.findViewById(R.id.media_image);
-            mSaveButton = itemView.findViewById(R.id.action_button_2);
-            mSavedImage = itemView.findViewById(R.id.action_button_2_saved);
+            mLikeCheckBox = itemView.findViewById(R.id.checkbox_like);
+
         }
 
         protected CardView mCardView;
         protected TextView mPrimaryText;
         protected TextView mSubText;
         protected ImageView mImage;
-        protected ImageButton mSaveButton;
-        protected ImageView mSavedImage;
+        protected CheckBox mLikeCheckBox;
     }
 
     protected Context mContext;

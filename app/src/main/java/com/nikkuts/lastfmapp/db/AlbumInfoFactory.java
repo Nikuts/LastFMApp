@@ -11,12 +11,36 @@ import com.nikkuts.lastfmapp.gson.albuminfo.Wiki;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlbumFactory {
+public class AlbumInfoFactory {
 
-    public static Album createAlbumFromEntities(AlbumInfoEntity albumInfoEntity, List<TrackEntity> trackEntities)
+    public static Album createAlbumInfoFromEntities(AlbumInfoEntity albumInfoEntity, List<TrackEntity> trackEntities)
     {
         Album album = createAlbumNoTracks(albumInfoEntity);
         album.setTracks(createTracks(trackEntities));
+        return album;
+    }
+
+    public static Album createAlbumInfoFromTopAlbum(com.nikkuts.lastfmapp.gson.topalbums.Album topAlbum){
+        Album album = new Album();
+        album.setArtist(topAlbum.getArtist().getName());
+        album.setName(topAlbum.getName());
+
+        album.setMbid(topAlbum.getMbid());
+        album.setUrl(topAlbum.getUrl());
+
+        Image largeImage = new Image();
+        largeImage.setText(topAlbum.getImage().get(Image.LARGE_IMAGE_URL_INDEX).getText());
+        Image extralargeImage = new Image();
+        extralargeImage.setText(topAlbum.getImage().get(Image.EXTRALARGE_IMAGE_URL_INDEX).getText());
+
+        List<Image> images = new ArrayList<>();
+        for (int i = 0; i < Image.IMAGES_COUNT; i++) {
+            images.add(new Image());
+        }
+        images.set(Image.LARGE_IMAGE_URL_INDEX, largeImage);
+        images.set(Image.EXTRALARGE_IMAGE_URL_INDEX, extralargeImage);
+        album.setImage(images);
+
         return album;
     }
 
@@ -41,8 +65,8 @@ public class AlbumFactory {
         for (int i = 0; i < Image.IMAGES_COUNT; i++) {
             images.add(new Image());
         }
-        images.set(Album.LARGE_IMAGE_URL_INDEX, largeImage);
-        images.set(Album.EXTRALARGE_IMAGE_URL_INDEX, extralargeImage);
+        images.set(Image.LARGE_IMAGE_URL_INDEX, largeImage);
+        images.set(Image.EXTRALARGE_IMAGE_URL_INDEX, extralargeImage);
         album.setImage(images);
 
         return album;

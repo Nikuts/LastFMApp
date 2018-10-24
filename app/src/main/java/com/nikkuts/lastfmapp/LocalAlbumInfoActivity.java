@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.nikkuts.lastfmapp.db.AlbumFactory;
+import com.nikkuts.lastfmapp.db.AlbumInfoFactory;
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.AlbumsDatabaseViewModel;
 import com.nikkuts.lastfmapp.glide.GlideApp;
+import com.nikkuts.lastfmapp.gson.Image;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 public class LocalAlbumInfoActivity extends AlbumInfoActivity {
@@ -25,7 +26,7 @@ public class LocalAlbumInfoActivity extends AlbumInfoActivity {
 
             mSpinner.setVisibility(View.GONE);
 
-            mCurrentAlbum = AlbumFactory.createAlbumFromEntities(albumWithTracks.getAlbumInfoEntity(),
+            mCurrentAlbum = AlbumInfoFactory.createAlbumInfoFromEntities(albumWithTracks.getAlbumInfoEntity(),
                     albumWithTracks.getTrackEntities());
 
             mToolbar.setTitle(mCurrentAlbum.getName());
@@ -36,7 +37,7 @@ public class LocalAlbumInfoActivity extends AlbumInfoActivity {
             mTracksAdapter.setTracks(mCurrentAlbum.getTracks().getTrack());
 
             GlideApp.with(mMediaImage)
-                    .load(mCurrentAlbum.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText())
+                    .load(mCurrentAlbum.getImage().get(Image.EXTRALARGE_IMAGE_URL_INDEX).getText())
                     .placeholder(R.drawable.ic_placeholder_gray_24dp)
                     .error(R.drawable.ic_placeholder_gray_24dp)
                     .fallback(R.drawable.ic_placeholder_gray_24dp)

@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.nikkuts.lastfmapp.db.AlbumWithTracks;
 import com.nikkuts.lastfmapp.db.entity.AlbumInfoEntity;
@@ -17,6 +18,9 @@ public interface AlbumDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(AlbumInfoEntity album);
+
+    @Update
+    void update(AlbumInfoEntity album);
 
     @Delete
     void delete(AlbumInfoEntity album);

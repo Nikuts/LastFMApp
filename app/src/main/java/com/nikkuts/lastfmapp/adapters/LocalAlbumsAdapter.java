@@ -10,6 +10,7 @@ import com.nikkuts.lastfmapp.R;
 import com.nikkuts.lastfmapp.db.AlbumsDatabase;
 import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.glide.GlideApp;
+import com.nikkuts.lastfmapp.gson.Image;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
             holder.mSubText.setText(mAlbums.get(position).getArtist());
 
             GlideApp.with(holder.mImage)
-                    .load(mAlbums.get(position).getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText())
+                    .load(mAlbums.get(position).getImage().get(Image.LARGE_IMAGE_URL_INDEX).getText())
                     .placeholder(R.drawable.ic_placeholder_gray_24dp)
                     .error(R.drawable.ic_placeholder_gray_24dp)
                     .fallback(R.drawable.ic_placeholder_gray_24dp)
@@ -47,8 +48,8 @@ public class LocalAlbumsAdapter extends AlbumsAdapter {
                 view.getContext().startActivity(infoIntent);
             });
 
-            holder.mSavedImage.setVisibility(View.VISIBLE);
-            holder.mSaveButton.setOnClickListener(view -> {
+            holder.mLikeCheckBox.setChecked(true);
+            holder.mLikeCheckBox.setOnClickListener(view -> {
                 new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(mContext), DatabaseActionAsyncTask.Action.DELETE).execute(mAlbums.get(position));
                 mAlbums.remove(position);
                 notifyItemRemoved(position);

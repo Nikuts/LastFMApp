@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.nikkuts.lastfmapp.gson.Image;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 @Entity
@@ -41,8 +42,8 @@ public class AlbumInfoEntity {
         this.albumName = album.getName();
         this.artistName = album.getArtist();
         this.url = album.getUrl();
-        this.largeImage = album.getImage().get(Album.LARGE_IMAGE_URL_INDEX).getText();
-        this.extralargeImage = album.getImage().get(Album.EXTRALARGE_IMAGE_URL_INDEX).getText();
+        this.largeImage = album.getImage().get(Image.LARGE_IMAGE_URL_INDEX).getText();
+        this.extralargeImage = album.getImage().get(Image.EXTRALARGE_IMAGE_URL_INDEX).getText();
 
         if (album.getWiki() != null)
             this.wiki = album.getWiki().getSummary();
