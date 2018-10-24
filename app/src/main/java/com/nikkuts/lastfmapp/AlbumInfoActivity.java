@@ -1,13 +1,14 @@
 package com.nikkuts.lastfmapp;
 
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import com.nikkuts.lastfmapp.db.DatabaseActionAsyncTask;
 import com.nikkuts.lastfmapp.gson.albuminfo.Album;
 
 public abstract class AlbumInfoActivity extends AppCompatActivity {
-    protected static final float THUMBNAIL_SIZE = 0.2f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +65,7 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
         mSpinner.setVisibility(View.VISIBLE);
 
         mSaveButton = findViewById(R.id.floating_action_button);
+        mSaveButtonImageMatrix = mSaveButton.getImageMatrix();
     }
 
     protected abstract void initViewModel();
@@ -73,18 +74,22 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
     protected void setFloatButtonImage(){
         if (mIsLocal){
             mSaveButton.setImageResource(R.drawable.ic_favorite_white_24dp);
+            mSaveButton.setImageMatrix(mSaveButtonImageMatrix);
         }
         else {
             mSaveButton.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+            mSaveButton.setImageMatrix(mSaveButtonImageMatrix);
         }
     }
     protected void onSaveClick() {
         if (mCurrentAlbum != null) {
             if (mIsLocal) {
                 mSaveButton.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                mSaveButton.setImageMatrix(mSaveButtonImageMatrix);
                 new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(this), DatabaseActionAsyncTask.Action.DELETE).execute(mCurrentAlbum);
             } else {
                 mSaveButton.setImageResource(R.drawable.ic_favorite_white_24dp);
+                mSaveButton.setImageMatrix(mSaveButtonImageMatrix);
                 new DatabaseActionAsyncTask(AlbumsDatabase.getDatabase(this), DatabaseActionAsyncTask.Action.INSERT).execute(mCurrentAlbum);
             }
             mIsLocal = !mIsLocal;
@@ -102,7 +107,7 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
     protected TextView mTitle;
     protected TextView mSubtitle;
     protected ProgressBar mSpinner;
-    protected ImageButton mSaveButton;
+    protected FloatingActionButton mSaveButton;
 
     protected RecyclerView mTracksView;
     protected TracksAdaptor mTracksAdapter;
@@ -112,4 +117,6 @@ public abstract class AlbumInfoActivity extends AppCompatActivity {
 
     protected boolean mIsLocal;
     protected Album mCurrentAlbum;
+
+    protected Matrix mSaveButtonImageMatrix;
 }

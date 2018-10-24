@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/checkbox_like"
-            android:button="@drawable/checkbox_like"
+            android:button="@drawable/checkbox_like_selector"
             android:layout_marginStart="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/media_image"/>
